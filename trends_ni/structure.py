@@ -14,6 +14,7 @@ class Structure:
     class raw:
         raw_data: Path = ROOT / "data" / "raw"
         fmri_map: Path = raw_data / "fMRI_{set_id}/{id}.mat"
+        train_scores: Path = raw_data / "train_scores.csv"
 
 
 structure = Structure()
