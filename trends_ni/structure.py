@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-ROOT = Path.cwd()
+ROOT = Path("/Users/carloszanella/dev/study/kaggle/trends/trends_ni/")
+
 
 @dataclass
 class Structure:
