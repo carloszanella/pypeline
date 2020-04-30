@@ -13,8 +13,11 @@ class Structure:
     @dataclass
     class raw:
         raw_data: Path = ROOT / "data" / "raw"
+        correlations: Path = raw_data / "fnc.csv"
+        loading: Path = raw_data / "loading.csv"
         fmri_map: Path = raw_data / "fMRI_{set_id}/{id}.mat"
-        train_scores: Path = raw_data / "train_scores.csv"
+        icn: Path = raw_data / "ICN_numbers.csv"
+        y_train: Path = raw_data / "train_scores.csv"
 
 
 structure = Structure()
