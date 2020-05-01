@@ -1,5 +1,7 @@
 from typing import List
 
+from trends_ni.entities import RawData
+
 
 class PipelineOrchestrator:
     def __init__(
@@ -21,10 +23,13 @@ class PipelineOrchestrator:
         np.random.seed(self.seed)
 
         # Split data
-        train_ix, val_ix = self.splitter.split(self.val_split)
+        train_ids, val_ids = self.splitter.split(self.val_split)
+
+        # create raw data
+        raw_train, raw_val = RawData(train_ids), RawData(val_ids)
 
         # Build datasets:
-        X_train, y_train, X_val, y_val = self.build_datasets(train_ix, val_ix)
+        X_train, y_train, X_val, y_val = self.build_datasets(raw_train, raw_val)
 
         # Train model
         model = self.model_trainer.train_model(X_train, y_train)
