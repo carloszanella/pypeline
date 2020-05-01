@@ -35,46 +35,49 @@ class RawData:
 
     def load_data_in_memory(
         self,
-        correlations: bool = True,
-        fmri: bool = False,
-        loadings: bool = False,
-        icn: bool = False,
+        correlations_path: Path = structure.raw.correlations,
+        fmri_path: Path = None,
+        loadings_path: Path = None,
+        icn_path: Path = None,
+        y_path: Path = structure.raw.y_train
     ):
         # load y
-        self.load_y()
+        self.load_y(y_path)
 
         # maybe load correlations
-        if correlations:
-            self.load_correlations()
+        if correlations_path:
+            self.load_correlations(correlations_path)
 
         # maybe load fmri data
-        if fmri:
-            self.load_fmri()
+        if fmri_path:
+            self.load_fmri(fmri_path)
 
         # maybe load loading data
-        if loadings:
-            self.loadings = self.load_loading_data()
+        if loadings_path:
+            self.loadings = self.load_loading_data(loadings_path)
 
         # maybe load ICN
-        if icn:
-            self.icn = self.load_icn()
+        if icn_path:
+            self.icn = self.load_icn(icn_path)
 
-    def load_y(self, path: Path) -> pd.Series:
+    def load_y(self, path: Path):
         y_train = pd.read_csv(path, index_col=0)
         self.y = y_train.loc[self.ids]
 
-    def load_correlations(self, path: Path) -> dd.DataFrame:
+    def load_correlations(self, path: Path):
         corr_ddf = dd.read_csv(path).set_index("Id")
         self.correlations = corr_ddf.loc[self.ids]
 
-    def load_fmri(self, path: Path) -> List[SubjectFMRI]:
+    def load_fmri(self, path: Path):
         subjects_fmri = [SubjectFMRI(id, self.set_id) for id in self.ids]
         self.fmri_maps = subjects_fmri
         _ = [subj.load_data(str(path).format(set_id=self.set_id, id=subj.id)) for subj in self.fmri_maps]
 
-    def load_loading_data(self) -> dd.DataFrame:
-        pass
+    def load_loading_data(self, path: Path):
+        loading_ddf = dd.read_csv(path).set_index("Id")
+        self.loadings = loading_ddf.loc[self.ids]
 
-    def load_icn(self) -> pd.Series:
-        pass
+    def load_icn(self, path: Path):
+        icn = pd.read_csv(path)
+        self.icn = icn.values
 
