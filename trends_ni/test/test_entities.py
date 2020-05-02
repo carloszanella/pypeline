@@ -26,7 +26,7 @@ def test_raw_data_init(sample_ids):
     assert raw.ids
 
 
-def test_raw_data_load_data(sample_ids, tiny_files_structure):
+def test_raw_data_load_data_in_memory(sample_ids, tiny_files_structure):
     raw = RawData(sample_ids)
     raw.load_data_in_memory(correlations_path=tiny_files_structure.raw.correlations)
     assert raw.correlations.compute().any().all()
