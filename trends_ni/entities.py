@@ -35,7 +35,7 @@ class RawData:
 
     def load_data_in_memory(
         self,
-        correlations_path: Path = structure.raw.correlations,
+        correlations_path: Path = None,
         y_path: Path = structure.raw.y_train,
         fmri_path: Path = None,
         loadings_path: Path = None,
