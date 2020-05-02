@@ -18,4 +18,7 @@ class DatasetBuilder:
         pass
 
     def process_target(self, data: RawData) -> pd.Series:
-        pass
+        y = data.y
+        y = y.fillna(0)
+        return y
+

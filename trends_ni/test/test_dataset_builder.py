@@ -7,4 +7,6 @@ def test_dataset_builder_instantiation(raw_data_sample):
     ds_builder = DatasetBuilder()
     ds_builder.maybe_build_dataset(raw_data_sample, "test_id", Path())
     ds_builder.build_dataset(raw_data_sample, Path())
-    ds_builder.process_target(raw_data_sample)
+    raw_data_sample.load_data_in_memory()
+    assert ds_builder.process_target(raw_data_sample).any().all()
+
