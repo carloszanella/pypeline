@@ -35,9 +35,6 @@ class FMRIDatasetBuilder(DatasetBuilder):
         else:
             df = self.build_dataset(data, ds_path)
 
-        log.info(
-            f"Finished building dataset. Final shape: ({len(data.ids)}, {df.shape[1]})."
-        )
         return df, y
 
     def build_dataset(self, data: RawData, ds_path: Path):
