@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from trends_ni.entities import RawData
 from trends_ni.structure import structure
 import pytest
 
@@ -12,3 +13,9 @@ def tiny_files_structure():
     test_structure = structure
     test_structure.ROOT = ASSETS_DIR
     return test_structure
+
+
+@pytest.fixture()
+def raw_data_sample():
+    raw = RawData([10001, 10002])
+    return raw

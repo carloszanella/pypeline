@@ -36,10 +36,10 @@ class RawData:
     def load_data_in_memory(
         self,
         correlations_path: Path = structure.raw.correlations,
+        y_path: Path = structure.raw.y_train,
         fmri_path: Path = None,
         loadings_path: Path = None,
         icn_path: Path = None,
-        y_path: Path = structure.raw.y_train
     ):
         # load y
         self.load_y(y_path)
