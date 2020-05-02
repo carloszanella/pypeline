@@ -20,23 +20,6 @@ class FMRIDatasetBuilder(DatasetBuilder):
         self.save_dataset = save_dataset
         self.n_maps = 53
 
-    def maybe_build_dataset(
-        self, data: RawData, dataset_id: str, out_dir: Path
-    ) -> Tuple[pd.DataFrame, pd.Series]:
-
-        log.info(f"Building {data.set_id} dataset {dataset_id}.")
-        ds_path = out_dir / dataset_id
-        y = self.process_target(data)
-
-        if ds_path.exists():
-            log.info(f"Found existing dataset in path: {ds_path}")
-            ddf = dd.read_parquet(ds_path)
-            df = ddf.compute()
-        else:
-            df = self.build_dataset(data, ds_path)
-
-        return df, y
-
     def build_dataset(self, data: RawData, ds_path: Path):
         data.load_data_in_memory(fmri_path=structure.raw.fmri_map)
         ddf = self.make_fmri_features(data.fmri_maps)

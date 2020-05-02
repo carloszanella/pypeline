@@ -17,7 +17,7 @@ def test_fmri_dataset_maybe_build_1(raw_data_sample):
     fmri_ds = FMRIDatasetBuilder()
     fmri_ds.build_dataset = Mock(spec=fmri_ds.build_dataset)
     fmri_ds.process_target = Mock(spec=fmri_ds.process_target)
-    fmri_ds.maybe_build_dataset(raw_data_sample, "test_id", Path())
+    fmri_ds.maybe_build_dataset(raw_data_sample, Path("test_id"))
     fmri_ds.build_dataset.assert_called_once_with(raw_data_sample, Path("test_id"))
     fmri_ds.process_target.assert_called_once_with(raw_data_sample)
 
@@ -27,11 +27,10 @@ def test_fmri_dataset_maybe_build_2(raw_data_sample):
     fmri_ds.build_dataset = Mock(spec=fmri_ds.build_dataset)
     fmri_ds.process_target = Mock(spec=fmri_ds.process_target)
 
-    test_id = "test_id"
-    path = Path() / test_id
+    path = Path() / "test_id"
     pd.DataFrame({"one": [1, 2], "two": [2, 1]}).to_parquet(path, compression="UNCOMPRESSED")
 
-    fmri_ds.maybe_build_dataset(raw_data_sample, test_id, Path())
+    fmri_ds.maybe_build_dataset(raw_data_sample, path)
 
     fmri_ds.build_dataset.assert_not_called()
     fmri_ds.process_target.assert_called_once_with(raw_data_sample)
