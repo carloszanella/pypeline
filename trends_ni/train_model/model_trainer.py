@@ -15,13 +15,6 @@ class ModelTrainer:
     def fit(self, X_train: dd.DataFrame, y_train: dd.DataFrame):
         pass
 
-    def get_training_metrics(
-            self,
-            X_train: pd.DataFrame,
-            y_train: pd.DataFrame
-    ) -> Tuple[List[float], float]:
-        pass
-
     def save_model(self, path: Path):
         pass
 
