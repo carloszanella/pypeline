@@ -5,8 +5,6 @@ from typing import Tuple
 from trends_ni.entities import RawData
 import pandas as pd
 
-DS_VERSION = "0.1.0"
-
 
 class DatasetBuilder:
     def maybe_build_dataset(

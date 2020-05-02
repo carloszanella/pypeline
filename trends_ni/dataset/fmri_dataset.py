@@ -10,13 +10,13 @@ import dask.dataframe as dd
 import dask.array as da
 import pandas as pd
 
-DS_VERSION = "0.1.0"
+DS_VERSION = "fmri_ds_0.1.0"
 log = getLogger(__name__)
 
 
 class FMRIDatasetBuilder(DatasetBuilder):
     def __init__(self, version: str = DS_VERSION, save_dataset: bool = False):
-        self.version = "fmri_ds_" + version
+        self.version = version
         self.save_dataset = save_dataset
         self.n_maps = 53
 
