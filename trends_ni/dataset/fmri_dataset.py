@@ -1,6 +1,6 @@
 from logging import getLogger
 from pathlib import Path
-from typing import List, Tuple
+from typing import List
 
 from trends_ni.dataset.dataset_builder import DatasetBuilder
 from trends_ni.entities import SubjectFMRI, RawData
@@ -8,7 +8,6 @@ from trends_ni.structure import structure
 
 import dask.dataframe as dd
 import dask.array as da
-import pandas as pd
 
 DS_VERSION = "fmri_ds_0.1.0"
 log = getLogger(__name__)
