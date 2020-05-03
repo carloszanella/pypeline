@@ -14,6 +14,7 @@ class Model:
 class BenchmarkModel(Model):
     def __init__(self):
         self.mean_values = None
+        self.name = "benchmark"
 
     def predict(self, X: pd.DataFrame) -> np.array:
         size = X.shape[0]

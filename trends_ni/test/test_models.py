@@ -26,4 +26,4 @@ def test_benchmark_model_predict(tiny_files_structure):
     y_pred = bm_model.predict(x_train)
 
     assert y_pred.shape == y_train.shape
-    assert (y_pred.mean(axis=0) == bm_model.mean_values).all()
+    assert np.isclose(y_pred.mean(axis=0), bm_model.mean_values).all()
