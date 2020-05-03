@@ -4,6 +4,7 @@ from typing import Tuple
 
 from trends_ni.entities import RawData
 import pandas as pd
+import numpy as np
 import dask.dataframe as dd
 
 log = getLogger(__name__)
@@ -14,17 +15,19 @@ class DatasetBuilder:
         self.version = None
 
     def maybe_build_dataset(
-        self, data: RawData, dataset_path: Path
+        self, ids: np.array, dataset_path: Path, set_id: str,
     ) -> Tuple[pd.DataFrame, pd.Series]:
-        log.info(f"Building {data.set_id} dataset. WIll be saved on {dataset_path}.")
-        y = self.process_target(data)
+        log.info(f"Building {set_id} dataset. WIll be saved on {dataset_path}.")
+
+        raw = self.load_data(ids, set_id)
+        y = self.process_target(raw)
 
         if dataset_path.exists():
             log.info(f"Found existing dataset in path: {dataset_path}")
             ddf = dd.read_parquet(dataset_path)
             df = ddf.compute()
         else:
-            df = self.build_dataset(data, dataset_path)
+            df = self.build_dataset(raw, dataset_path)
 
         return df, y
 
@@ -36,3 +39,5 @@ class DatasetBuilder:
         y = y.fillna(0)
         return y
 
+    def load_data(self, ids: np.array, set_id: str) -> RawData:
+        pass

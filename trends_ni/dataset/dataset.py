@@ -7,13 +7,14 @@ from trends_ni.entities import SubjectFMRI, RawData
 from trends_ni.structure import structure
 
 import dask.dataframe as dd
+import numpy as np
 import dask.array as da
 
 DS_VERSION = "fmri_ds_0.1.0"
 log = getLogger(__name__)
 
 
-class FMRIDatasetBuilder(DatasetBuilder):
+class FMRIDataset(DatasetBuilder):
     def __init__(self, version: str = DS_VERSION, save_dataset: bool = False):
         self.version = version
         self.save_dataset = save_dataset
@@ -50,3 +51,12 @@ class FMRIDatasetBuilder(DatasetBuilder):
         fmri_array = da.concatenate(rows, axis=-1).T
 
         return dd.from_dask_array(fmri_array, columns=col_names)
+
+    def load_data(self, ids: np.array, set_id: str) -> RawData:
+        raw = RawData(ids, set_id)
+        raw.load_data_in_memory(fmri_path=structure.raw.fmri_map)
+        return raw
+
+
+class RawCorrelations(DatasetBuilder):
+    pass
