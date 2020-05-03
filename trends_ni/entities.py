@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from logging import getLogger
 from pathlib import Path
 from typing import List
 
@@ -6,14 +7,19 @@ import dask.dataframe as dd
 import h5py
 import dask.array as da
 import pandas as pd
+
 from trends_ni.structure import structure
+from trends_ni.train_model.models import Model
+
+log = getLogger(__name__)
 
 
+@dataclass
 class SubjectFMRI:
-    def __init__(self, id: int, set_id: str = "train"):
-        self.id = id
-        self.set_id = set_id
-        self.fmri_map = None
+
+    id: int
+    set_id: str = "train"
+    fmri_map: da.array = None
 
     def load_data(self, fmri_path: str):
         f = h5py.File(fmri_path, "r")
@@ -71,7 +77,10 @@ class RawData:
     def load_fmri(self, path: Path):
         subjects_fmri = [SubjectFMRI(id, self.set_id) for id in self.ids]
         self.fmri_maps = subjects_fmri
-        _ = [subj.load_data(str(path).format(set_id=self.set_id, id=subj.id)) for subj in self.fmri_maps]
+        _ = [
+            subj.load_data(str(path).format(set_id=self.set_id, id=subj.id))
+            for subj in self.fmri_maps
+        ]
 
     def load_loading_data(self, path: Path):
         loading_ddf = dd.read_csv(path).set_index("Id")
@@ -81,3 +90,16 @@ class RawData:
         icn = pd.read_csv(path)
         self.icn = icn.values
 
+
+@dataclass
+class TrainingResults:
+    model_version: str = None
+    model: Model = None
+    scores: List[float] = None
+    weighted_score: float = None
+
+    def print_score_results(self):
+        log.info(f"Training scores for model {self.model_version}")
+        log.info("#########################################")
+        log.info("MAE: ", self.scores)
+        log.info("Weighted Score: ", self.weighted_score)

@@ -1,4 +1,4 @@
-from trends_ni.entities import SubjectFMRI, RawData
+from trends_ni.entities import SubjectFMRI, RawData, TrainingResults
 import pytest
 
 from trends_ni.structure import structure
@@ -64,3 +64,8 @@ def test_raw_load_icn(sample_ids):
     raw = RawData(sample_ids)
     raw.load_icn(structure.raw.icn)
     assert raw.icn.all()
+
+
+def test_training_results():
+    res = TrainingResults("test_id", model=None, scores=[1, 2, 3], weighted_score=1)
+    res.print_score_results()
