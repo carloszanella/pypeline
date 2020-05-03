@@ -13,10 +13,13 @@ class Model:
 
 class BenchmarkModel(Model):
     def __init__(self):
-        mean_values = None
+        self.mean_values = None
 
     def predict(self, X: pd.DataFrame) -> np.array:
-        pass
+        size = X.shape[0]
+        y_pred = np.ones((size, len(self.mean_values))) * self.mean_values.values
+
+        return y_pred
 
     def fit(self, X: pd.DataFrame, y: pd.DataFrame) -> Model:
-        pass
+        self.mean_values = y.mean(axis=0)
