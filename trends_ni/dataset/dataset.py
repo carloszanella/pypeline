@@ -11,8 +11,24 @@ import numpy as np
 import dask.array as da
 
 FMRI_DS_VERSION = "fmri_ds_0.1.0"
-RAW_CORR_VERSION = "rcorr_ds_0.1.0"
+SIMPLE_CORR_VERSION = "rcorr_ds_0.1.0"
+BM_DS_VERSION = "bm_ds_0.1.0"
 log = getLogger(__name__)
+
+
+class BenchmarkDataset(DatasetBuilder):
+    def __init__(self, file_structure: Structure = structure):
+        self.structure = file_structure
+        self.save_dataset = False
+        self.version = BM_DS_VERSION
+
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
+        return dd.from_array(np.array([np.nan] * 4).reshape(2, 2))
+
+    def load_data(self, ids: np.array, set_id: str) -> RawData:
+        raw = RawData(ids, set_id)
+        raw.load_data_in_memory(y_path=self.structure.raw.y_train)
+        return raw
 
 
 class FMRIDataset(DatasetBuilder):
@@ -62,11 +78,11 @@ class FMRIDataset(DatasetBuilder):
 
 class SimpleCorrelationsDataset(DatasetBuilder):
     def __init__(self, save_dataset: bool = False, file_structure: Structure = structure):
-        self.version = RAW_CORR_VERSION
+        self.version = SIMPLE_CORR_VERSION
         self.save_dataset = save_dataset
         self.structure = file_structure
 
-    def build_dataset(self, raw: RawData, path: Path) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         return raw.correlations
 
     def load_data(self, ids: np.array, set_id: str) -> RawData:

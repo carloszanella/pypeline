@@ -18,7 +18,7 @@ class DatasetBuilder:
 
     def maybe_build_dataset(
         self, ids: np.array, dataset_path: Path, set_id: str,
-    ) -> Tuple[pd.DataFrame, pd.Series]:
+    ) -> Tuple[pd.DataFrame, np.array]:
         log.info(f"Building {set_id} dataset. WIll be saved on {dataset_path}.")
 
         raw = self.load_data(ids, set_id)
@@ -33,13 +33,13 @@ class DatasetBuilder:
 
         return df, y
 
-    def build_dataset(self, raw: RawData, path: Path) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         pass
 
-    def process_target(self, data: RawData) -> pd.Series:
+    def process_target(self, data: RawData) -> np.array:
         y = data.y
         y = y.fillna(0)
-        return y
+        return y.values
 
     def load_data(self, ids: np.array, set_id: str) -> RawData:
         pass

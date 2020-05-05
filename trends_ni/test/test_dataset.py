@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 from unittest.mock import Mock
 
-from trends_ni.dataset.dataset import FMRIDataset, SimpleCorrelationsDataset
+from trends_ni.dataset.dataset import FMRIDataset, SimpleCorrelationsDataset, BenchmarkDataset
 from trends_ni.structure import structure
 
 
@@ -44,3 +44,11 @@ def test_simple_corr_load_data(tiny_files_structure, sample_ids):
     simple_corr_ds = SimpleCorrelationsDataset()
     simple_corr_ds.structure = tiny_files_structure
     assert simple_corr_ds.load_data(sample_ids, "test").correlations.compute().any().any()
+
+
+def test_benchmark_model_ds(tiny_files_structure, raw_data_sample, sample_ids):
+    bm_ds = BenchmarkDataset(tiny_files_structure)
+    raw = bm_ds.load_data(sample_ids, "train")
+    df = bm_ds.build_dataset(raw, Path())
+    assert not df.compute().any().any()
+    assert raw.y.any().any()
