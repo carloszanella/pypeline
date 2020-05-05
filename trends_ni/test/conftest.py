@@ -38,4 +38,4 @@ def raw_data_sample():
 
 @pytest.fixture()
 def sample_ids():
-    return np.array([10001, 10002])
+    return np.array([10001, 10002, 10004, 10005])

@@ -30,7 +30,7 @@ def test_fmri_make_fmri_features(raw_data_sample):
 
 def test_fmri_load_data(sample_ids):
     fmri_ds = FMRIDataset()
-    assert fmri_ds.load_data(sample_ids, "train").fmri_maps[0].fmri_map.compute().any()
+    assert fmri_ds.load_data(sample_ids[:2], "train").fmri_maps[0].fmri_map.compute().any()
 
 
 def test_simple_corr_build_dataset(raw_data_sample, tiny_files_structure):
