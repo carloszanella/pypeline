@@ -14,17 +14,18 @@ log = getLogger(__name__)
 
 
 class ModelTrainer:
-    def __init__(self, save: bool = False):
+    def __init__(self, model: Model, save: bool = False):
         self.version = None
         self.save = save
+        self.model = model
 
-    def train_model(self, model: Model, X_train: pd.DataFrame, y_train: pd.DataFrame, out_path: Path) -> TrainingResults:
+    def train_model(self, X_train: pd.DataFrame, y_train: pd.DataFrame, out_path: Path) -> TrainingResults:
         results = TrainingResults()
         results.model_version = self.version
-        model.fit(X_train, y_train)
-        results.model = model
+        self.model.fit(X_train, y_train)
+        results.model = self.model
 
-        scores, weighted_score = Score.evaluate_predictions(y_train, model.predict(X_train))
+        scores, weighted_score = Score.evaluate_predictions(y_train, self.model.predict(X_train))
         results.scores, results.weighted_score = scores, weighted_score
 
         if self.save:
