@@ -28,7 +28,7 @@ class PipelineOrchestrator:
         self.seed = seed
         self.val_split = val_split
 
-    def run_pipeline(self, ids: List[float], val_split: float):
+    def run_pipeline(self, ids: List[float], val_split: float) -> TrainingResults:
         np.random.seed(self.seed)
 
         # Split data
@@ -42,6 +42,8 @@ class PipelineOrchestrator:
         result = self.model_trainer.train_model(X_train, y_train, model_path)
 
         # export results TODO
+
+        return result
 
     def build_datasets(
         self, train_ids: np.array, val_ids: np.array
