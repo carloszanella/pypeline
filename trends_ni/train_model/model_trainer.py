@@ -3,25 +3,23 @@ from logging import getLogger
 from pathlib import Path
 from typing import Tuple, List
 
-import pandas as pd
+import numpy as np
 
 from trends_ni.entities import TrainingResults
 from trends_ni.evaluation.score import Score
 from trends_ni.train_model.models import Model
 
-BENCHMARK_MODEL_VERSION = "0.0.1"
 log = getLogger(__name__)
 
 
 class ModelTrainer:
     def __init__(self, model: Model, save: bool = False):
-        self.version = None
         self.save = save
         self.model = model
 
-    def train_model(self, X_train: pd.DataFrame, y_train: pd.DataFrame, out_path: Path) -> TrainingResults:
+    def train_model(self, X_train: np.array, y_train: np.array, out_path: Path) -> TrainingResults:
         results = TrainingResults()
-        results.model_version = self.version
+        results.model_version = self.model.version
         self.model.fit(X_train, y_train)
         results.model = self.model
 

@@ -1,26 +1,28 @@
 from __future__ import annotations
-import pandas as pd
 import numpy as np
 
 
 class Model:
-    def predict(self, X: pd.DataFrame) -> np.array:
+    def __init__(self):
+        version = None
+    def predict(self, X: np.array) -> np.array:
         pass
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame) -> Model:
+    def fit(self, X: np.array, y: np.array) -> Model:
         pass
 
 
 class BenchmarkModel(Model):
     def __init__(self):
         self.mean_values = None
-        self.name = "benchmark"
+        self.version = "benchmark_0.1"
 
-    def predict(self, X: pd.DataFrame) -> np.array:
+    def predict(self, X: np.array) -> np.array:
         size = X.shape[0]
         y_pred = np.ones((size, len(self.mean_values))) * self.mean_values.values
 
         return y_pred
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame) -> Model:
+    def fit(self, X: np.array, y: np.array) -> Model:
         self.mean_values = y.mean(axis=0)
+        return self
