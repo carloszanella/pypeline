@@ -13,6 +13,8 @@ log = getLogger(__name__)
 class DatasetBuilder:
     def __init__(self):
         self.version = None
+        self.save_dataset = None
+        self.structure = None
 
     def maybe_build_dataset(
         self, ids: np.array, dataset_path: Path, set_id: str,
@@ -31,7 +33,7 @@ class DatasetBuilder:
 
         return df, y
 
-    def build_dataset(self, data: RawData, path: Path):
+    def build_dataset(self, raw: RawData, path: Path) -> dd.DataFrame:
         pass
 
     def process_target(self, data: RawData) -> pd.Series:

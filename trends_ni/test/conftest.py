@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+import numpy as np
 
 from trends_ni.entities import RawData
 import pytest
@@ -33,3 +34,8 @@ def tiny_files_structure():
 def raw_data_sample():
     raw = RawData([10001, 10002])
     return raw
+
+
+@pytest.fixture()
+def sample_ids():
+    return np.array([10001, 10002])

@@ -4,25 +4,27 @@ from typing import List
 
 from trends_ni.dataset.dataset_builder import DatasetBuilder
 from trends_ni.entities import SubjectFMRI, RawData
-from trends_ni.structure import structure
+from trends_ni.structure import structure, Structure
 
 import dask.dataframe as dd
 import numpy as np
 import dask.array as da
 
-DS_VERSION = "fmri_ds_0.1.0"
+FMRI_DS_VERSION = "fmri_ds_0.1.0"
+RAW_CORR_VERSION = "rcorr_ds_0.1.0"
 log = getLogger(__name__)
 
 
 class FMRIDataset(DatasetBuilder):
-    def __init__(self, version: str = DS_VERSION, save_dataset: bool = False):
-        self.version = version
+    def __init__(self, save_dataset: bool = False, file_structure: Structure = structure):
+        self.version = FMRI_DS_VERSION
         self.save_dataset = save_dataset
+        self.structure = file_structure
         self.n_maps = 53
 
-    def build_dataset(self, data: RawData, ds_path: Path):
-        data.load_data_in_memory(fmri_path=structure.raw.fmri_map)
-        ddf = self.make_fmri_features(data.fmri_maps)
+    def build_dataset(self, raw: RawData, ds_path: Path) -> dd.DataFrame:
+        raw.load_data_in_memory(fmri_path=structure.raw.fmri_map)
+        ddf = self.make_fmri_features(raw.fmri_maps)
 
         if self.save_dataset:
             log.info(f"Saving dataset to path: {ds_path}.")
@@ -54,9 +56,20 @@ class FMRIDataset(DatasetBuilder):
 
     def load_data(self, ids: np.array, set_id: str) -> RawData:
         raw = RawData(ids, set_id)
-        raw.load_data_in_memory(fmri_path=structure.raw.fmri_map)
+        raw.load_data_in_memory(fmri_path=self.structure.raw.fmri_map)
         return raw
 
 
-class RawCorrelations(DatasetBuilder):
-    pass
+class SimpleCorrelationsDataset(DatasetBuilder):
+    def __init__(self, save_dataset: bool = False, file_structure: Structure = structure):
+        self.version = RAW_CORR_VERSION
+        self.save_dataset = save_dataset
+        self.structure = file_structure
+
+    def build_dataset(self, raw: RawData, path: Path) -> dd.DataFrame:
+        return raw.correlations
+
+    def load_data(self, ids: np.array, set_id: str) -> RawData:
+        raw = RawData(ids, set_id)
+        raw.load_data_in_memory(self.structure.raw.correlations)
+        return raw

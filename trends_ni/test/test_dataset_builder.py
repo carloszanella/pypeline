@@ -2,16 +2,9 @@ import os
 from pathlib import Path
 from unittest.mock import Mock
 
-import numpy as np
 import pandas as pd
-import pytest
 
 from trends_ni.dataset.dataset_builder import DatasetBuilder
-
-
-@pytest.fixture()
-def sample_ids():
-    return np.array([10001, 10002])
 
 
 def test_dataset_builder_instantiation(raw_data_sample, sample_ids):
