@@ -1,13 +1,12 @@
 import pickle
 from logging import getLogger
 from pathlib import Path
-from typing import Tuple, List
 
 import numpy as np
 
 from trends_ni.entities import TrainingResults
 from trends_ni.evaluation.score import Score
-from trends_ni.train_model.models import Model
+from trends_ni.training.models import Model
 
 log = getLogger(__name__)
 

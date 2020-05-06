@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pandas as pd
 
-from trends_ni.dataset.dataset_builder import DatasetBuilder
+from trends_ni.processing.dataset_builder import DatasetBuilder
 
 
 def test_dataset_builder_instantiation(raw_data_sample, sample_ids):

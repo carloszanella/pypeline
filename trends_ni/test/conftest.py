@@ -14,7 +14,7 @@ def tiny_files_structure():
     @dataclass
     class Structure:
         data_root: Path = ASSETS_DIR / "data"
-        dataset: Path = data_root / "dataset"
+        dataset: Path = data_root / "processing"
         model: Path = data_root / "model" / "model_{version}_{seed}_ds_{version}_{rows}_{cols}.pkl"
 
         @dataclass

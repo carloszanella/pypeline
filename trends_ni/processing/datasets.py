@@ -2,7 +2,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import List
 
-from trends_ni.dataset.dataset_builder import DatasetBuilder
+from trends_ni.processing.dataset_builder import DatasetBuilder
 from trends_ni.entities import SubjectFMRI, RawData
 from trends_ni.structure import structure, Structure
 

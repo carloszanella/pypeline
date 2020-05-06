@@ -1,4 +1,4 @@
-from trends_ni.dataset.data_splitter import TrainValSplitter
+from trends_ni.processing.data_splitter import TrainValSplitter
 import numpy as np
 
 

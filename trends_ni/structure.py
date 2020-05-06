@@ -7,7 +7,7 @@ ROOT = Path("/Users/carloszanella/dev/study/kaggle/trends/trends_ni/")
 @dataclass
 class Structure:
     data_root: Path = ROOT / "data"
-    dataset: Path = data_root / "dataset"
+    dataset: Path = data_root / "processing"
     model: Path = data_root / "model"
 
     @dataclass

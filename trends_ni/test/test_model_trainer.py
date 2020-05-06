@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from trends_ni.train_model.model_trainer import ModelTrainer
-from trends_ni.train_model.models import BenchmarkModel
+from trends_ni.training.model_trainer import ModelTrainer
+from trends_ni.training.models import BenchmarkModel
 
 
 def test_train_model(tiny_files_structure):

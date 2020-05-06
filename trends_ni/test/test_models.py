@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from trends_ni.train_model.models import Model, BenchmarkModel
+from trends_ni.training.models import Model, BenchmarkModel
 
 
 def test_model_class():

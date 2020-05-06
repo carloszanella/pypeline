@@ -3,10 +3,10 @@ from unittest.mock import Mock
 import numpy as np
 import pandas as pd
 
-from trends_ni.dataset.dataset import BenchmarkDataset
+from trends_ni.processing.datasets import BenchmarkDataset
 from trends_ni.orchestrator.pipeline_orchestrator import PipelineOrchestrator
-from trends_ni.train_model.model_trainer import ModelTrainer
-from trends_ni.train_model.models import BenchmarkModel
+from trends_ni.training.model_trainer import ModelTrainer
+from trends_ni.training.models import BenchmarkModel
 
 
 def test_pipeline_orchestrator_run_calls(tiny_files_structure, sample_ids):

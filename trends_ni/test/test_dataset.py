@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 from unittest.mock import Mock
 
-from trends_ni.dataset.dataset import FMRIDataset, SimpleCorrelationsDataset, BenchmarkDataset
+from trends_ni.processing.datasets import FMRIDataset, SimpleCorrelationsDataset, BenchmarkDataset
 from trends_ni.structure import structure
 
 

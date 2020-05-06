@@ -9,7 +9,7 @@ import dask.array as da
 import pandas as pd
 
 from trends_ni.structure import structure
-from trends_ni.train_model.models import Model
+from trends_ni.training.models import Model
 
 log = getLogger(__name__)
 
