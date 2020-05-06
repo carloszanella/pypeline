@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import numpy as np
 import pandas as pd
 
@@ -7,9 +9,20 @@ from trends_ni.train_model.model_trainer import ModelTrainer
 from trends_ni.train_model.models import BenchmarkModel
 
 
-def test_pipeline_orchestrator_run_calls():
-    orchestrator = PipelineOrchestrator()
-    orchestrator.run_pipeline()
+def test_pipeline_orchestrator_run_calls(tiny_files_structure, sample_ids):
+    orchestrator = PipelineOrchestrator(
+        ds_builder=Mock(spec=BenchmarkDataset),
+        model_trainer=Mock(spec=ModelTrainer)
+    )
+    orchestrator.get_model_path = Mock(spec=orchestrator.get_model_path)
+    orchestrator.build_datasets = Mock(spec=orchestrator.build_datasets, return_value=(0, 0, 0, 0))
+    orchestrator.splitter.split = Mock(spec=orchestrator.splitter.split, return_value=(0, 0))
+    orchestrator.run_pipeline(sample_ids)
+
+    orchestrator.splitter.split.assert_called_once_with(sample_ids, 0.2)
+    orchestrator.build_datasets.assert_called_once()
+    orchestrator.get_model_path.assert_called_once()
+    orchestrator.model_trainer.train_model.assert_called_once()
 
 
 def test_pipeline_orchestrator_build_datasets(sample_ids, tiny_files_structure):
@@ -36,3 +49,14 @@ def test_pipeline_orchestrator_scale_datasets(tiny_files_structure):
 
     assert x_tr_scaled.any()
     assert x_val_scaled.any()
+
+
+def test_get_model_path(tiny_files_structure):
+    orchestrator = PipelineOrchestrator(
+        ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
+        model_trainer=ModelTrainer(BenchmarkModel())
+    )
+
+    path = orchestrator.get_model_path()
+    assert path
+    assert orchestrator.model_trainer.model.version in path.stem

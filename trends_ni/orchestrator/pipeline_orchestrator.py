@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from trends_ni.dataset.data_splitter import TrainValSplitter, DataSplitter
 from trends_ni.dataset.dataset_builder import DatasetBuilder
 from trends_ni.entities import TrainingResults
-from trends_ni.structure import structure
+from trends_ni.structure import structure, Structure
 from trends_ni.train_model.model_trainer import ModelTrainer
 
 
@@ -16,19 +16,19 @@ class PipelineOrchestrator:
         self,
         ds_builder: DatasetBuilder,
         model_trainer: ModelTrainer,
+        file_structure: Structure = structure,
         splitter: DataSplitter = TrainValSplitter(),
         scaler: StandardScaler = StandardScaler(),
         seed: int = 42,
-        val_split: float = 0.2,
     ):
         self.ds_builder = ds_builder
         self.model_trainer = model_trainer
         self.scaler = scaler
         self.splitter = splitter
         self.seed = seed
-        self.val_split = val_split
+        self.structure = file_structure
 
-    def run_pipeline(self, ids: List[float], val_split: float) -> TrainingResults:
+    def run_pipeline(self, ids: List[float], val_split: float = 0.2) -> TrainingResults:
         np.random.seed(self.seed)
 
         # Split data
@@ -42,7 +42,6 @@ class PipelineOrchestrator:
         result = self.model_trainer.train_model(X_train, y_train, model_path)
 
         # export results TODO
-
         return result
 
     def build_datasets(
@@ -69,4 +68,7 @@ class PipelineOrchestrator:
         return X_train_scaled, X_val_scaled
 
     def get_model_path(self) -> Path:
-        pass
+        model_dir = self.structure.model
+        model_id = f"{self.model_trainer.model.version}_{self.ds_builder.version}_{self.seed}.pkl"
+        model_path = model_dir / model_id
+        return model_path

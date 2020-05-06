@@ -4,7 +4,8 @@ import numpy as np
 
 class Model:
     def __init__(self):
-        version = None
+        self.version = None
+
     def predict(self, X: np.array) -> np.array:
         pass
 
