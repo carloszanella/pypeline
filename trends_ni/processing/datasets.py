@@ -23,9 +23,10 @@ class BenchmarkDataset(DatasetBuilder):
         self.version = BM_DS_VERSION
 
     def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
-        return dd.from_array(np.array([np.nan] * 4).reshape(2, 2))
+        size = raw.y.shape[0]
+        return dd.from_array(np.array([np.nan] * size).reshape(-1, 1))
 
-    def load_data(self, ids: np.array, set_id: str) -> RawData:
+    def load_data(self, ids: np.ndarray, set_id: str) -> RawData:
         raw = RawData(ids, set_id)
         raw.load_data_in_memory(y_path=self.structure.raw.y_train)
         return raw
@@ -70,7 +71,7 @@ class FMRIDataset(DatasetBuilder):
 
         return dd.from_dask_array(fmri_array, columns=col_names)
 
-    def load_data(self, ids: np.array, set_id: str) -> RawData:
+    def load_data(self, ids: np.ndarray, set_id: str) -> RawData:
         raw = RawData(ids, set_id)
         raw.load_data_in_memory(fmri_path=self.structure.raw.fmri_map)
         return raw
@@ -85,7 +86,7 @@ class SimpleCorrelationsDataset(DatasetBuilder):
     def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         return raw.correlations
 
-    def load_data(self, ids: np.array, set_id: str) -> RawData:
+    def load_data(self, ids: np.ndarray, set_id: str) -> RawData:
         raw = RawData(ids, set_id)
         raw.load_data_in_memory(self.structure.raw.correlations)
         return raw

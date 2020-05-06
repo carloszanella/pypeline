@@ -42,11 +42,12 @@ class PipelineOrchestrator:
         result = self.model_trainer.train_model(X_train, y_train, model_path)
 
         # export results TODO
+        self.evaluate_validation_set(results)
         return result
 
     def build_datasets(
-        self, train_ids: np.array, val_ids: np.array
-    ) -> Tuple[np.array, np.array, np.array, np.array]:
+        self, train_ids: np.ndarray, val_ids: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
         train_ds_id = f"{self.ds_builder.version}_{len(train_ids)}_{self.seed}"
         train_ds_path = structure.dataset / train_ds_id
@@ -61,7 +62,7 @@ class PipelineOrchestrator:
 
         return X_train, y_train, X_val, y_val
 
-    def scale_datasets(self, X_train: pd.DataFrame, X_val: pd.DataFrame) -> Tuple[np.array, np.array]:
+    def scale_datasets(self, X_train: pd.DataFrame, X_val: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         X_train_scaled = self.scaler.fit_transform(X_train)
         X_val_scaled = self.scaler.transform(X_val)
 
@@ -72,3 +73,6 @@ class PipelineOrchestrator:
         model_id = f"{self.model_trainer.model.version}_{self.ds_builder.version}_{self.seed}.pkl"
         model_path = model_dir / model_id
         return model_path
+
+    def evaluate_validation_set(self, results: TrainingResults):
+        pass

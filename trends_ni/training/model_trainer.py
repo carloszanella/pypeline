@@ -16,7 +16,7 @@ class ModelTrainer:
         self.save = save
         self.model = model
 
-    def train_model(self, X_train: np.array, y_train: np.array, out_path: Path) -> TrainingResults:
+    def train_model(self, X_train: np.ndarray, y_train: np.ndarray, out_path: Path) -> TrainingResults:
         results = TrainingResults()
         results.model_version = self.model.version
         self.model.fit(X_train, y_train)
@@ -28,6 +28,7 @@ class ModelTrainer:
         if self.save:
             self.save_results(out_path, results)
 
+        results.model_path = out_path
         results.print_score_results()
 
         return results

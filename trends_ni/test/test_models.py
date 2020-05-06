@@ -20,8 +20,8 @@ def test_benchmark_model_fit(tiny_files_structure):
 
 def test_benchmark_model_predict(tiny_files_structure):
     bm_model = BenchmarkModel()
-    x_train = pd.DataFrame(np.ones((10, 5)))
-    y_train = pd.read_csv(tiny_files_structure.raw.y_train, index_col=0)
+    x_train = np.ones((10, 5))
+    y_train = pd.read_csv(tiny_files_structure.raw.y_train, index_col=0).values
     bm_model.fit(x_train, y_train)
     y_pred = bm_model.predict(x_train)
 

@@ -97,9 +97,10 @@ class TrainingResults:
     model: Model = None
     scores: List[float] = None
     weighted_score: float = None
+    model_path: Path = None
 
     def print_score_results(self):
-        log.info(f"Training scores for model {self.model_version}")
-        log.info("#########################################")
-        log.info("MAE: ", self.scores)
-        log.info("Weighted Score: ", self.weighted_score)
+        print(f"Training scores for model {self.model_version}")
+        print("#########################################")
+        print("MAE: ", self.scores)
+        print("Weighted Score: ", self.weighted_score)
