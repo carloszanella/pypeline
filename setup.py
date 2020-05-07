@@ -1,45 +1,27 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""The setup script."""
+# coding=utf-8
 import versioneer
 from setuptools import setup, find_packages
 
-with open('README.rst') as readme_file:
-    readme = readme_file.read()
+packages = find_packages()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
+with open('requirements.txt') as fp:
+    dependencies = fp.readlines()
 
-requirements = [ ]
-
-setup_requirements = ['pytest-runner', ]
-
-test_requirements = ['pytest', ]
+# with open('requirements-test.txt') as fp:
+#     test_dependencies = fp.readlines()
 
 setup(
-    author="Data Revenue GmbH",
-    author_email='alan@datarevenue.com',
-    classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3.7',
-    ],
-    description="Trends NeuroImaging",
-    install_requires=requirements,
-    license="MIT license",
-    long_description=readme + '\n\n' + history,
-    include_package_data=True,
-    keywords='manpy',
-    name='manpy',
-    packages=find_packages(include=['manpy']),
-    setup_requires=setup_requirements,
-    test_suite='tests',
-    tests_require=test_requirements,
-    url='https://github.com/pedrocwb/manpy',
-    version = versioneer.get_version(),
-    cmdclass = versioneer.get_cmdclass(),
+    name='trends-neuroimaging',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
+    description='{{cookiecutter.description}}',
+    author='Data Revenue GmbH',
+    author_email='markus@datarevenue.com',
+    install_requires=dependencies,
+    extras_require={
+        'test': None,
+    },
+    packages=packages,
     zip_safe=False,
+    include_package_data=True
 )
