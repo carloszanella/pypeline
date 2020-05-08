@@ -1,3 +1,5 @@
+import pickle
+from logging import getLogger
 from pathlib import Path
 from typing import List, Tuple
 import pandas as pd
@@ -11,6 +13,8 @@ from trends_ni.entities import TrainingResults
 from trends_ni.structure import structure, Structure
 from trends_ni.training.model_trainer import ModelTrainer
 
+log = getLogger(__name__)
+
 
 class PipelineOrchestrator:
     def __init__(
@@ -21,6 +25,7 @@ class PipelineOrchestrator:
         splitter: DataSplitter = TrainValSplitter(),
         scaler: StandardScaler = StandardScaler(),
         seed: int = 42,
+        save_results: bool = False,
     ):
         self.ds_builder = ds_builder
         self.model_trainer = model_trainer
@@ -28,21 +33,23 @@ class PipelineOrchestrator:
         self.splitter = splitter
         self.seed = seed
         self.structure = file_structure
+        self.save = save_results
 
     def run_pipeline(self, ids: List[float], val_split: float = 0.2) -> TrainingResults:
         np.random.seed(self.seed)
 
-        # Split data
         train_ids, val_ids = self.splitter.split(ids, val_split)
 
-        # Build datasets:
         X_train, y_train, X_val, y_val = self.build_datasets(train_ids, val_ids)
 
-        # Train model
-        model_path = self.get_model_path()
-        results = self.model_trainer.train_model(X_train, y_train, model_path)
+        results = self.model_trainer.train_model(X_train, y_train)
+        results.model_path = self.get_model_path()
 
         self.evaluate_validation_set(results, X_val, y_val)
+
+        if self.save:
+            self.save_results(results)
+
         return results
 
     def build_datasets(
@@ -85,3 +92,10 @@ class PipelineOrchestrator:
         val_mae, val_weighted_mae = Score.evaluate_predictions(y_val, y_val_pred)
         results.validation_mae = val_mae
         results.validation_weighted_mae = val_weighted_mae
+
+    def save_results(self, results: TrainingResults):
+        results.model_path.parent.mkdir(exist_ok=True)
+        log.info(f"Saving model on path {results.model_path}")
+
+        with open(results.model_path, "wb") as fp:
+            pickle.dump(results, fp)

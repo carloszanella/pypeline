@@ -1,6 +1,4 @@
-import pickle
 from logging import getLogger
-from pathlib import Path
 
 import numpy as np
 
@@ -12,12 +10,11 @@ log = getLogger(__name__)
 
 
 class ModelTrainer:
-    def __init__(self, model: Model, save: bool = False):
-        self.save = save
+    def __init__(self, model: Model):
         self.model = model
 
     def train_model(
-        self, X_train: np.ndarray, y_train: np.ndarray, out_path: Path
+        self, X_train: np.ndarray, y_train: np.ndarray
     ) -> TrainingResults:
         results = TrainingResults()
         results.model_version = self.model.version
@@ -29,18 +26,6 @@ class ModelTrainer:
         )
         results.train_mae, results.train_weighted_mae = scores, weighted_score
 
-        if self.save:
-            # TODO: move this to the orchestrator or just save the model here and results there
-            self.save_results(out_path, results)
-
-        results.model_path = out_path
         results.print_score_results()
 
         return results
-
-    def save_results(self, path: Path, results: TrainingResults):
-        path.parent.mkdir(exist_ok=True)
-        log.info(f"Saving model on path {path}")
-
-        with open(path, "wb") as fp:
-            pickle.dump(results, fp)

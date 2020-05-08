@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from unittest.mock import Mock
 
 import numpy as np
@@ -87,3 +89,18 @@ def test_evaluate_validation_set(tiny_files_structure):
 
     assert results.validation_weighted_mae
     assert results.validation_mae
+
+
+def test_save_results(tiny_files_structure):
+    orchestrator = PipelineOrchestrator(
+        ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
+        model_trainer=ModelTrainer(BenchmarkModel()),
+    )
+
+    path = Path("test.pkl")
+    results = TrainingResults(model_path=path)
+
+    orchestrator.save_results(results)
+
+    assert path.exists()
+    os.remove(path)
