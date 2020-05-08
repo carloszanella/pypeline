@@ -1,9 +1,11 @@
+from abc import ABCMeta, abstractmethod
 from typing import List, Tuple
 
 import numpy as np
 
 
-class DataSplitter:
+class DataSplitter(metaclass=ABCMeta):
+    @abstractmethod
     def split(self, ids: np.array, val_split: float) -> Tuple[np.array, np.array]:
         pass
 

@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def test_score_evaluate_predictions():
-    y_true = pd.DataFrame(np.zeros((5, 5)))
+    y_true = np.zeros((5, 5))
     y_pred = np.ones((5, 5))
 
     scores, weighted_score = Score.evaluate_predictions(y_true, y_pred)

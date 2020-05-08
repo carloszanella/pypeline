@@ -1,14 +1,19 @@
 from __future__ import annotations
+
+from abc import ABCMeta, abstractmethod
+
 import numpy as np
 
 
-class Model:
+class Model(metaclass=ABCMeta):
     def __init__(self):
         self.version = None
 
+    @abstractmethod
     def predict(self, X: np.ndarray) -> np.ndarray:
         pass
 
+    @abstractmethod
     def fit(self, X: np.ndarray, y: np.ndarray) -> Model:
         pass
 

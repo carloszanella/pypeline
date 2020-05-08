@@ -62,7 +62,7 @@ def test_get_model_path(tiny_files_structure):
     assert orchestrator.model_trainer.model.version in path.stem
 
 
-def test_evaluate_validation_set():
+def test_evaluate_validation_set(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
         ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
         model_trainer=ModelTrainer(BenchmarkModel())

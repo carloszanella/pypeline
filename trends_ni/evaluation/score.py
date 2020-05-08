@@ -7,7 +7,7 @@ class Score:
 
     @staticmethod
     def evaluate_predictions(y_true: np.ndarray, y_pred: np.ndarray) -> Tuple[list, float]:
-        weights = np.ndarray([0.3, 0.175, 0.175, 0.175, 0.175])
+        weights = np.array([0.3, 0.175, 0.175, 0.175, 0.175])
         scores = []
         for i in range(5):
             y_t, y_p = y_true[:, i], y_pred[:, i]
