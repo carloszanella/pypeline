@@ -95,12 +95,16 @@ class RawData:
 class TrainingResults:
     model_version: str = None
     model: Model = None
-    scores: List[float] = None
-    weighted_score: float = None
+    train_mae: List[float] = None
+    train_weighted_mae: float = None
+    validation_mae: List[float] = None
+    validation_weighted_mae: float = None
     model_path: Path = None
 
     def print_score_results(self):
-        print(f"Training scores for model {self.model_version}")
+        print(f"Scores for model {self.model_version}")
         print("#########################################")
-        print("MAE: ", self.scores)
-        print("Weighted Score: ", self.weighted_score)
+        print("Train MAE: ", self.train_mae)
+        print("Train Weighted MAE: ", self.train_weighted_mae)
+        print("Validation MAE: ", self.train_mae)
+        print("Validation Weighted MAE: ", self.train_weighted_mae)

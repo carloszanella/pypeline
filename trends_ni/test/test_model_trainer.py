@@ -14,8 +14,8 @@ def test_train_model(tiny_files_structure):
 
     results = trainer.train_model(X_train, y_train, Path())
     assert results.model.mean_values.all()
-    assert results.scores
-    assert results.weighted_score
+    assert results.train_mae
+    assert results.train_weighted_mae
 
 
 def test_save_results(tiny_files_structure):

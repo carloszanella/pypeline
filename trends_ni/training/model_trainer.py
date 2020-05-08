@@ -23,7 +23,7 @@ class ModelTrainer:
         results.model = self.model
 
         scores, weighted_score = Score.evaluate_predictions(y_train, self.model.predict(X_train))
-        results.scores, results.weighted_score = scores, weighted_score
+        results.train_mae, results.train_weighted_mae = scores, weighted_score
 
         if self.save:
             self.save_results(out_path, results)
