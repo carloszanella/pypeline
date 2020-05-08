@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import numpy as np
 import pandas as pd
 
+from trends_ni.entities import TrainingResults
 from trends_ni.processing.datasets import BenchmarkDataset
 from trends_ni.orchestrator.pipeline_orchestrator import PipelineOrchestrator
 from trends_ni.training.model_trainer import ModelTrainer
@@ -68,4 +69,12 @@ def test_evaluate_validation_set(tiny_files_structure):
         model_trainer=ModelTrainer(BenchmarkModel())
     )
 
-    orchestrator.evaluate_validation_set(results)
+    x_val = np.random.random((10, 20))
+    y_val = np.random.random((10, 5))
+
+    results = TrainingResults(model=BenchmarkModel())
+    results.model.predict = lambda *args: np.random.random((10, 5))
+    orchestrator.evaluate_validation_set(results, x_val, y_val)
+
+    assert results.validation_weighted_mae
+    assert results.validation_mae

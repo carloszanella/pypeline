@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 
+from trends_ni.evaluation.score import Score
 from trends_ni.processing.data_splitter import TrainValSplitter, DataSplitter
 from trends_ni.processing.dataset_builder import DatasetBuilder
 from trends_ni.entities import TrainingResults
@@ -39,11 +40,11 @@ class PipelineOrchestrator:
 
         # Train model
         model_path = self.get_model_path()
-        result = self.model_trainer.train_model(X_train, y_train, model_path)
+        results = self.model_trainer.train_model(X_train, y_train, model_path)
 
         # export results TODO
-        self.evaluate_validation_set(results)
-        return result
+        self.evaluate_validation_set(results, X_val, y_val)
+        return results
 
     def build_datasets(
         self, train_ids: np.ndarray, val_ids: np.ndarray
@@ -74,5 +75,8 @@ class PipelineOrchestrator:
         model_path = model_dir / model_id
         return model_path
 
-    def evaluate_validation_set(self, results: TrainingResults):
-        pass
+    def evaluate_validation_set(self, results: TrainingResults, X_val: np.ndarray, y_val: np.ndarray):
+        y_val_pred = results.model.predict(X_val)
+        val_mae, val_weighted_mae = Score.evaluate_predictions(y_val, y_val_pred)
+        results.validation_mae = val_mae
+        results.validation_weighted_mae = val_weighted_mae
