@@ -4,9 +4,10 @@ from sklearn.metrics import mean_absolute_error
 
 
 class Score:
-
     @staticmethod
-    def evaluate_predictions(y_true: np.ndarray, y_pred: np.ndarray) -> Tuple[list, float]:
+    def evaluate_predictions(
+        y_true: np.ndarray, y_pred: np.ndarray
+    ) -> Tuple[list, float]:
         weights = np.array([0.3, 0.175, 0.175, 0.175, 0.175])
         scores = []
         for i in range(5):

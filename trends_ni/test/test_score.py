@@ -1,6 +1,5 @@
 from trends_ni.evaluation.score import Score
 import numpy as np
-import pandas as pd
 
 
 def test_score_evaluate_predictions():

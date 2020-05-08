@@ -32,7 +32,9 @@ def test_dataset_maybe_build(raw_data_sample, sample_ids, sample_dataset):
     ds_builder.process_target = Mock(spec=ds_builder.process_target)
 
     path = Path() / "test_id"
-    pd.DataFrame({"one": [1, 2], "two": [2, 1]}).to_parquet(path, compression="UNCOMPRESSED")
+    pd.DataFrame({"one": [1, 2], "two": [2, 1]}).to_parquet(
+        path, compression="UNCOMPRESSED"
+    )
 
     ds_builder.maybe_build_dataset(sample_ids, path, "test")
 

@@ -10,17 +10,17 @@ import dask.dataframe as dd
 import numpy as np
 import dask.array as da
 
-FMRI_DS_VERSION = "fmri_ds_0.1.0"
-SIMPLE_CORR_VERSION = "rcorr_ds_0.1.0"
-BM_DS_VERSION = "bm_ds_0.1.0"
+FMRI_DS_VERSION = "fmri_ds_0.1"
+SIMPLE_CORR_VERSION = "rcorr_ds_0.1"
+BM_DS_VERSION = "bm_ds_0.1"
 log = getLogger(__name__)
 
 
 class BenchmarkDataset(DatasetBuilder):
-    def __init__(self, file_structure: Structure = structure):
-        self.structure = file_structure
-        self.save_dataset = False
-        self.version = BM_DS_VERSION
+    def __init__(
+        self, save_dataset: bool = False, file_structure: Structure = structure
+    ):
+        super().__init__(BM_DS_VERSION, save_dataset, file_structure)
 
     def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         size = raw.y.shape[0]
@@ -33,10 +33,10 @@ class BenchmarkDataset(DatasetBuilder):
 
 
 class FMRIDataset(DatasetBuilder):
-    def __init__(self, save_dataset: bool = False, file_structure: Structure = structure):
-        self.version = FMRI_DS_VERSION
-        self.save_dataset = save_dataset
-        self.structure = file_structure
+    def __init__(
+        self, save_dataset: bool = False, file_structure: Structure = structure
+    ):
+        super().__init__(FMRI_DS_VERSION, save_dataset, file_structure)
         self.n_maps = 53
 
     def build_dataset(self, raw: RawData, ds_path: Path) -> dd.DataFrame:
@@ -78,10 +78,10 @@ class FMRIDataset(DatasetBuilder):
 
 
 class SimpleCorrelationsDataset(DatasetBuilder):
-    def __init__(self, save_dataset: bool = False, file_structure: Structure = structure):
-        self.version = SIMPLE_CORR_VERSION
-        self.save_dataset = save_dataset
-        self.structure = file_structure
+    def __init__(
+        self, save_dataset: bool = False, file_structure: Structure = structure
+    ):
+        super().__init__(SIMPLE_CORR_VERSION, save_dataset, file_structure)
 
     def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         return raw.correlations

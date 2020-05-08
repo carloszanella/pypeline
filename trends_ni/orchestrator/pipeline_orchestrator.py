@@ -42,7 +42,6 @@ class PipelineOrchestrator:
         model_path = self.get_model_path()
         results = self.model_trainer.train_model(X_train, y_train, model_path)
 
-        # export results TODO
         self.evaluate_validation_set(results, X_val, y_val)
         return results
 
@@ -56,14 +55,18 @@ class PipelineOrchestrator:
         val_ds_id = f"{self.ds_builder.version}_{len(val_ids)}_{self.seed}"
         val_ds_path = structure.dataset / val_ds_id
 
-        X_train, y_train = self.ds_builder.maybe_build_dataset(train_ids, train_ds_path, "train")
+        X_train, y_train = self.ds_builder.maybe_build_dataset(
+            train_ids, train_ds_path, "train"
+        )
         X_val, y_val = self.ds_builder.maybe_build_dataset(val_ids, val_ds_path, "val")
-        
+
         X_train, X_val = self.scale_datasets(X_train, X_val)
 
         return X_train, y_train, X_val, y_val
 
-    def scale_datasets(self, X_train: pd.DataFrame, X_val: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+    def scale_datasets(
+        self, X_train: pd.DataFrame, X_val: pd.DataFrame
+    ) -> Tuple[np.ndarray, np.ndarray]:
         X_train_scaled = self.scaler.fit_transform(X_train)
         X_val_scaled = self.scaler.transform(X_val)
 
@@ -75,7 +78,9 @@ class PipelineOrchestrator:
         model_path = model_dir / model_id
         return model_path
 
-    def evaluate_validation_set(self, results: TrainingResults, X_val: np.ndarray, y_val: np.ndarray):
+    def evaluate_validation_set(
+        self, results: TrainingResults, X_val: np.ndarray, y_val: np.ndarray
+    ):
         y_val_pred = results.model.predict(X_val)
         val_mae, val_weighted_mae = Score.evaluate_predictions(y_val, y_val_pred)
         results.validation_mae = val_mae

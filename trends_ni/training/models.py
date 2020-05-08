@@ -6,8 +6,8 @@ import numpy as np
 
 
 class Model(metaclass=ABCMeta):
-    def __init__(self):
-        self.version = None
+    def __init__(self, version: str):
+        self.version = version
 
     @abstractmethod
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -20,8 +20,8 @@ class Model(metaclass=ABCMeta):
 
 class BenchmarkModel(Model):
     def __init__(self):
+        super().__init__(version="benchmark_0.1")
         self.mean_values = None
-        self.version = "benchmark_0.1"
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         size = X.shape[0]

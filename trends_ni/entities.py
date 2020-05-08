@@ -7,6 +7,7 @@ import dask.dataframe as dd
 import h5py
 import dask.array as da
 import pandas as pd
+import numpy as np
 
 from trends_ni.structure import structure
 from trends_ni.training.models import Model
@@ -31,7 +32,7 @@ class SubjectFMRI:
 
 @dataclass
 class RawData:
-    ids: List[int]
+    ids: np.ndarray
     set_id: str = "train"
     correlations: dd.DataFrame = None
     fmri_maps: List[SubjectFMRI] = None

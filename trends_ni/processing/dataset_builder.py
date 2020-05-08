@@ -8,14 +8,21 @@ import pandas as pd
 import numpy as np
 import dask.dataframe as dd
 
+from trends_ni.structure import Structure, structure
+
 log = getLogger(__name__)
 
 
 class DatasetBuilder(metaclass=ABCMeta):
-    def __init__(self):
-        self.version = None
-        self.save_dataset = None
-        self.structure = None
+    def __init__(
+        self,
+        version: str,
+        save_dataset: bool = False,
+        file_structure: Structure = structure,
+    ):
+        self.version = version
+        self.save_dataset = save_dataset
+        self.structure = file_structure
 
     def maybe_build_dataset(
         self, ids: np.array, dataset_path: Path, set_id: str,

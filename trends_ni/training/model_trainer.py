@@ -16,16 +16,21 @@ class ModelTrainer:
         self.save = save
         self.model = model
 
-    def train_model(self, X_train: np.ndarray, y_train: np.ndarray, out_path: Path) -> TrainingResults:
+    def train_model(
+        self, X_train: np.ndarray, y_train: np.ndarray, out_path: Path
+    ) -> TrainingResults:
         results = TrainingResults()
         results.model_version = self.model.version
         self.model.fit(X_train, y_train)
         results.model = self.model
 
-        scores, weighted_score = Score.evaluate_predictions(y_train, self.model.predict(X_train))
+        scores, weighted_score = Score.evaluate_predictions(
+            y_train, self.model.predict(X_train)
+        )
         results.train_mae, results.train_weighted_mae = scores, weighted_score
 
         if self.save:
+            # TODO: move this to the orchestrator or just save the model here and results there
             self.save_results(out_path, results)
 
         results.model_path = out_path

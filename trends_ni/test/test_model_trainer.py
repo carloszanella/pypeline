@@ -10,7 +10,9 @@ from trends_ni.training.models import BenchmarkModel
 def test_train_model(tiny_files_structure):
     trainer = ModelTrainer(BenchmarkModel())
     X_train = pd.read_csv(tiny_files_structure.raw.correlations, index_col=0)
-    y_train = pd.read_csv(tiny_files_structure.raw.y_train, index_col=0).fillna(0).values
+    y_train = (
+        pd.read_csv(tiny_files_structure.raw.y_train, index_col=0).fillna(0).values
+    )
 
     results = trainer.train_model(X_train, y_train, Path())
     assert results.model.mean_values.all()
@@ -21,7 +23,9 @@ def test_train_model(tiny_files_structure):
 def test_save_results(tiny_files_structure):
     trainer = ModelTrainer(BenchmarkModel(), save=True)
     X_train = pd.read_csv(tiny_files_structure.raw.correlations, index_col=0)
-    y_train = pd.read_csv(tiny_files_structure.raw.y_train, index_col=0).fillna(0).values
+    y_train = (
+        pd.read_csv(tiny_files_structure.raw.y_train, index_col=0).fillna(0).values
+    )
     path = Path("test.pkl")
 
     results = trainer.train_model(X_train, y_train, path)

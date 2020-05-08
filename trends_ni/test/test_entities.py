@@ -67,5 +67,7 @@ def test_raw_load_icn(sample_ids):
 
 
 def test_training_results():
-    res = TrainingResults("test_id", model=None, scores=[1, 2, 3], weighted_score=1)
+    res = TrainingResults(
+        "test_id", model=None, train_mae=[1, 2, 3], train_weighted_mae=1
+    )
     res.print_score_results()
