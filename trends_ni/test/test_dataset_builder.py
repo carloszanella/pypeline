@@ -1,26 +1,32 @@
 import os
 from pathlib import Path
 from unittest.mock import Mock
+import pytest
 
 import pandas as pd
 
 from trends_ni.processing.dataset_builder import DatasetBuilder
 
 
-def test_dataset_builder_instantiation(raw_data_sample, sample_ids):
-    ds_builder = DatasetBuilder()
-    ds_builder.process_target = Mock(spec=ds_builder.process_target)
-    ds_builder.build_dataset = lambda *args: 1
+@pytest.fixture()
+def sample_dataset():
+    class DS(DatasetBuilder):
+        def __init__(self):
+            self.version = None
+            self.save_dataset = None
+            self.structure = None
 
-    raw_data_sample.load_data_in_memory()
+        def build_dataset(self, raw, out_path):
+            pass
 
-    ds_builder.load_data(sample_ids, "train")
-    ds_builder.maybe_build_dataset(sample_ids, Path("test"), "test")
-    ds_builder.process_target.assert_called_once_with(None)
+        def load_data(self, ids, set_id: str):
+            pass
+
+    return DS
 
 
-def test_dataset_maybe_build(raw_data_sample, sample_ids):
-    ds_builder = DatasetBuilder()
+def test_dataset_maybe_build(raw_data_sample, sample_ids, sample_dataset):
+    ds_builder = sample_dataset()
     ds_builder.load_data = Mock(spec=ds_builder.load_data, return_value=raw_data_sample)
     ds_builder.build_dataset = Mock(spec=ds_builder.build_dataset)
     ds_builder.process_target = Mock(spec=ds_builder.process_target)
@@ -35,8 +41,8 @@ def test_dataset_maybe_build(raw_data_sample, sample_ids):
     os.remove(path)
 
 
-def test_dataset_maybe_build_2(raw_data_sample, sample_ids):
-    ds_builder = DatasetBuilder()
+def test_dataset_maybe_build_2(raw_data_sample, sample_ids, sample_dataset):
+    ds_builder = sample_dataset()
     ds_builder.load_data = Mock(spec=ds_builder.load_data, return_value=raw_data_sample)
     ds_builder.build_dataset = Mock(spec=ds_builder.build_dataset)
     ds_builder.process_target = Mock(spec=ds_builder.process_target)

@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 from logging import getLogger
 from pathlib import Path
 from typing import Tuple
@@ -10,7 +11,7 @@ import dask.dataframe as dd
 log = getLogger(__name__)
 
 
-class DatasetBuilder:
+class DatasetBuilder(metaclass=ABCMeta):
     def __init__(self):
         self.version = None
         self.save_dataset = None
@@ -33,6 +34,7 @@ class DatasetBuilder:
 
         return df, y
 
+    @abstractmethod
     def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         pass
 
@@ -41,5 +43,6 @@ class DatasetBuilder:
         y = y.fillna(0)
         return y.values
 
+    @abstractmethod
     def load_data(self, ids: np.array, set_id: str) -> RawData:
         pass
