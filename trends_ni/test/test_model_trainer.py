@@ -13,7 +13,7 @@ def test_train_model(tiny_files_structure):
         pd.read_csv(tiny_files_structure.raw.y_train, index_col=0).fillna(0).values
     )
 
-    results = trainer.train_model(X_train, y_train, Path())
+    results = trainer.train_model(X_train, y_train)
     assert results.model.mean_values.all()
     assert results.train_mae
     assert results.train_weighted_mae
