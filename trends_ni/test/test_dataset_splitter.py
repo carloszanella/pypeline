@@ -3,7 +3,7 @@ import numpy as np
 
 
 def test_train_val_splitter():
-    ids = np.arange(1, 100, 50)
+    ids = np.arange(300, 500)
     train_splitter = TrainValSplitter()
     val_split = 0.2
     train_ix, val_ix = train_splitter.split(ids, val_split)

@@ -102,6 +102,8 @@ class TrainingResults:
     validation_mae: List[float] = None
     validation_weighted_mae: float = None
     model_path: Path = None
+    train_ids: np.ndarray = None
+    val_ids: np.ndarray = None
 
     def print_score_results(self):
         print(f"Scores for model {self.model_version}")

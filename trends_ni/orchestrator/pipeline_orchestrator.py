@@ -45,6 +45,8 @@ class PipelineOrchestrator:
 
         results = self.model_trainer.train_model(X_train, y_train)
         results.model_path = self.get_model_path()
+        results.train_ids = train_ids
+        results.val_ids = val_ids
 
         self.evaluate_validation_set(results, X_val, y_val)
 

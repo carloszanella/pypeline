@@ -17,6 +17,6 @@ class TrainValSplitter(DataSplitter):
         ds_size = len(ids)
         val_size = int(np.floor(val_split * ds_size))
         val_ids = np.random.choice(ids, size=val_size, replace=False)
-        train_ids = np.delete(ids, val_ids)
+        train_ids = ids[~np.isin(ids, val_ids)]
 
         return train_ids, val_ids
