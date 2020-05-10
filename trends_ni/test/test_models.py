@@ -29,6 +29,6 @@ def test_benchmark_model_predict(tiny_files_structure):
 def test_sklearn_wrapper_init():
     params = {"fit_intercept": True}
     lin_reg = SKLearnWrapper(model=LinearRegression(**params))
-    lin_reg.fit(np.random.random((100, 2)), np.ones(100))
+    lin_reg.fit(np.random.random((100, 2)), np.ones((100,5)))
     assert lin_reg.predict(np.random.random((10, 2))).all()
     assert lin_reg.params

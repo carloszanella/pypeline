@@ -52,5 +52,5 @@ def test_dataset_maybe_build_2(raw_data_sample, sample_ids, sample_dataset):
 
     ds_builder.maybe_build_dataset(sample_ids, path, "test")
 
-    ds_builder.dataset.build_dataset.assert_called_once_with(raw_data_sample, path, False)
+    ds_builder.dataset.build_dataset.assert_called_once_with(raw_data_sample, path)
     ds_builder.process_target.assert_called_once_with(raw_data_sample)

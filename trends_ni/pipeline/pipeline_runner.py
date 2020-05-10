@@ -31,13 +31,13 @@ class PipelineRunner:
         save_results: bool = False,
         save_dataset: bool = False,
     ):
-        self.ds_builder = DatasetBuilder(dataset, save_dataset, file_structure)
+        self.ds_builder = DatasetBuilder(dataset, file_structure)
         self.model_trainer = ModelTrainer(model)
         self.scaler = scaler
         self.splitter = splitter
         self.seed = seed
         self.structure = file_structure
-        self.save_results = save_results
+        self.save_res = save_results
         self.save_dataset = save_dataset
 
     def run_pipeline(self, ids: List[float], val_split: float = 0.2) -> TrainingResults:
@@ -54,7 +54,7 @@ class PipelineRunner:
 
         self.evaluate_validation_set(results, X_val, y_val)
 
-        if self.save_results:
+        if self.save_res:
             self.save_results(results)
 
         return results
