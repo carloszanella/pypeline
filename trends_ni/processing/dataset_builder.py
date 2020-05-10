@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import dask.dataframe as dd
 
+from trends_ni.processing.datasets import Dataset
 from trends_ni.structure import Structure, structure
 
 log = getLogger(__name__)
@@ -17,11 +18,11 @@ log.setLevel(DEBUG)
 class DatasetBuilder(metaclass=ABCMeta):
     def __init__(
         self,
-        version: str,
+        dataset: Dataset,
         save_dataset: bool = False,
         file_structure: Structure = structure,
     ):
-        self.version = version
+        self.dataset = dataset
         self.save_dataset = save_dataset
         self.structure = file_structure
 
@@ -30,7 +31,7 @@ class DatasetBuilder(metaclass=ABCMeta):
     ) -> Tuple[pd.DataFrame, np.array]:
         log.info(f"Building {set_id} dataset. WIll be saved on {dataset_path}.")
 
-        raw = self.load_data(ids, set_id)
+        raw = self.dataset.load_data(ids, set_id, self.structure)
         y = self.process_target(raw)
 
         if dataset_path.exists():
@@ -38,19 +39,11 @@ class DatasetBuilder(metaclass=ABCMeta):
             ddf = dd.read_parquet(dataset_path)
             df = ddf.compute()
         else:
-            df = self.build_dataset(raw, dataset_path)
+            df = self.dataset.build_dataset(raw, dataset_path, self.save_dataset)
 
         return df, y
-
-    @abstractmethod
-    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
-        pass
 
     def process_target(self, data: RawData) -> np.array:
         y = data.y
         y = y.fillna(0)
         return y.values
-
-    @abstractmethod
-    def load_data(self, ids: np.array, set_id: str) -> RawData:
-        pass

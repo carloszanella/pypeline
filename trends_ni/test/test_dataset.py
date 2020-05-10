@@ -1,17 +1,30 @@
-import os
-import pandas as pd
 from pathlib import Path
 from unittest.mock import Mock
 
 from trends_ni.processing.datasets import (
     FMRIDataset,
     SimpleCorrelationsDataset,
-    BenchmarkDataset,
+    BenchmarkDataset, Dataset,
 )
 from trends_ni.structure import structure
 
 
-def test_fmri_dataset_builder_instantiation():
+def test_dataset_abc_class():
+    class DS(Dataset):
+        def __init__(self):
+            super().__init__("none")
+
+        def build_dataset(self, raw, out_path, save=False):
+            pass
+
+        def load_data(self, ids, set_id: str, fs):
+            pass
+    ds = DS()
+
+    assert ds.version
+
+
+def test_fmri_dataset_instantiation():
     fmri_ds = FMRIDataset()
     assert fmri_ds.version
     assert fmri_ds.n_maps
@@ -35,7 +48,7 @@ def test_fmri_make_fmri_features(raw_data_sample):
 def test_fmri_load_data(sample_ids):
     fmri_ds = FMRIDataset()
     assert (
-        fmri_ds.load_data(sample_ids[:2], "train").fmri_maps[0].fmri_map.compute().any()
+        fmri_ds.load_data(sample_ids[:2], "train", structure).fmri_maps[0].fmri_map.compute().any()
     )
 
 
@@ -52,13 +65,13 @@ def test_simple_corr_load_data(tiny_files_structure, sample_ids):
     simple_corr_ds = SimpleCorrelationsDataset()
     simple_corr_ds.structure = tiny_files_structure
     assert (
-        simple_corr_ds.load_data(sample_ids, "test").correlations.compute().any().any()
+        simple_corr_ds.load_data(sample_ids, "test", tiny_files_structure).correlations.compute().any().any()
     )
 
 
 def test_benchmark_model_ds(tiny_files_structure, raw_data_sample, sample_ids):
-    bm_ds = BenchmarkDataset(tiny_files_structure)
-    raw = bm_ds.load_data(sample_ids, "train")
+    bm_ds = BenchmarkDataset()
+    raw = bm_ds.load_data(sample_ids, "train", tiny_files_structure)
     df = bm_ds.build_dataset(raw, Path())
     assert not df.compute().any().any()
     assert raw.y.any().any()

@@ -59,10 +59,10 @@ class PipelineOrchestrator:
         self, train_ids: np.ndarray, val_ids: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
-        train_ds_id = f"{self.ds_builder.version}_{len(train_ids)}_{self.seed}"
+        train_ds_id = f"{self.ds_builder.dataset.version}_{len(train_ids)}_{self.seed}"
         train_ds_path = structure.dataset / train_ds_id
 
-        val_ds_id = f"{self.ds_builder.version}_{len(val_ids)}_{self.seed}"
+        val_ds_id = f"{self.ds_builder.dataset.version}_{len(val_ids)}_{self.seed}"
         val_ds_path = structure.dataset / val_ds_id
 
         X_train, y_train = self.ds_builder.maybe_build_dataset(
@@ -84,7 +84,7 @@ class PipelineOrchestrator:
 
     def get_model_path(self) -> Path:
         model_dir = self.structure.model
-        model_id = f"{self.model_trainer.model.version}_{self.ds_builder.version}_{self.seed}.pkl"
+        model_id = f"{self.model_trainer.model.version}_{self.ds_builder.dataset.version}_{self.seed}.pkl"
         model_path = model_dir / model_id
         return model_path
 

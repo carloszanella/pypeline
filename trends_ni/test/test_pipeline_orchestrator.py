@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from trends_ni.entities import TrainingResults
+from trends_ni.processing.dataset_builder import DatasetBuilder
 from trends_ni.processing.datasets import BenchmarkDataset
 from trends_ni.orchestrator.pipeline_orchestrator import PipelineOrchestrator
 from trends_ni.training.model_trainer import ModelTrainer
@@ -37,7 +38,7 @@ def test_pipeline_orchestrator_run_calls(tiny_files_structure, sample_ids):
 
 def test_pipeline_orchestrator_build_datasets(sample_ids, tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
+        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
         model_trainer=ModelTrainer(BenchmarkModel()),
     )
     X_train, y_train, X_val, y_val = orchestrator.build_datasets(
@@ -52,7 +53,7 @@ def test_pipeline_orchestrator_build_datasets(sample_ids, tiny_files_structure):
 
 def test_pipeline_orchestrator_scale_datasets(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
+        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
         model_trainer=ModelTrainer(BenchmarkModel()),
     )
     x_tr = pd.DataFrame(np.random.random((20, 20)))
@@ -65,7 +66,7 @@ def test_pipeline_orchestrator_scale_datasets(tiny_files_structure):
 
 def test_get_model_path(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
+        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
         model_trainer=ModelTrainer(BenchmarkModel()),
     )
 
@@ -76,7 +77,7 @@ def test_get_model_path(tiny_files_structure):
 
 def test_evaluate_validation_set(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
+        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
         model_trainer=ModelTrainer(BenchmarkModel()),
     )
 
@@ -93,7 +94,7 @@ def test_evaluate_validation_set(tiny_files_structure):
 
 def test_save_results(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=BenchmarkDataset(file_structure=tiny_files_structure),
+        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
         model_trainer=ModelTrainer(BenchmarkModel()),
     )
 

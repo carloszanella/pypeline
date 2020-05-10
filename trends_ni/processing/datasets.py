@@ -1,8 +1,8 @@
+from abc import ABCMeta, abstractmethod
 from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import List
 
-from trends_ni.processing.dataset_builder import DatasetBuilder
 from trends_ni.entities import SubjectFMRI, RawData
 from trends_ni.structure import structure, Structure
 
@@ -17,36 +17,51 @@ log = getLogger(__name__)
 log.setLevel(DEBUG)
 
 
-class BenchmarkDataset(DatasetBuilder):
+class Dataset(metaclass=ABCMeta):
     def __init__(
-        self, save_dataset: bool = False, file_structure: Structure = structure
+        self, version: str,
     ):
-        super().__init__(BM_DS_VERSION, save_dataset, file_structure)
+        self.version = version
 
-    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
+    @abstractmethod
+    def build_dataset(self, raw: RawData, out_path: Path, save: bool = False) -> dd.DataFrame:
+        pass
+
+    @abstractmethod
+    def load_data(
+        self, ids: np.ndarray, set_id: str, file_structure: Structure
+    ) -> RawData:
+        pass
+
+
+class BenchmarkDataset(Dataset):
+    def __init__(self):
+        super().__init__(BM_DS_VERSION)
+
+    def build_dataset(self, raw: RawData, out_path: Path, save: bool = False) -> dd.DataFrame:
         size = raw.y.shape[0]
         return dd.from_array(np.array([np.nan] * size).reshape(-1, 1))
 
-    def load_data(self, ids: np.ndarray, set_id: str) -> RawData:
+    def load_data(
+        self, ids: np.ndarray, set_id: str, file_structure: Structure
+    ) -> RawData:
         raw = RawData(ids, set_id)
-        raw.load_data_in_memory(y_path=self.structure.raw.y_train)
+        raw.load_data_in_memory()
         return raw
 
 
-class FMRIDataset(DatasetBuilder):
-    def __init__(
-        self, save_dataset: bool = False, file_structure: Structure = structure
-    ):
-        super().__init__(FMRI_DS_VERSION, save_dataset, file_structure)
+class FMRIDataset(Dataset):
+    def __init__(self):
+        super().__init__(FMRI_DS_VERSION)
         self.n_maps = 53
 
-    def build_dataset(self, raw: RawData, ds_path: Path) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path, save: bool = False) -> dd.DataFrame:
         raw.load_data_in_memory(fmri_path=structure.raw.fmri_map)
         ddf = self.make_fmri_features(raw.fmri_maps)
 
-        if self.save_dataset:
-            log.info(f"Saving dataset to path: {ds_path}.")
-            ddf.to_parquet(ds_path)
+        if save:
+            log.info(f"Saving dataset to path: {out_path}.")
+            ddf.to_parquet(out_path)
 
         return ddf
 
@@ -72,22 +87,24 @@ class FMRIDataset(DatasetBuilder):
 
         return dd.from_dask_array(fmri_array, columns=col_names)
 
-    def load_data(self, ids: np.ndarray, set_id: str) -> RawData:
+    def load_data(
+        self, ids: np.ndarray, set_id: str, file_structure: Structure
+    ) -> RawData:
         raw = RawData(ids, set_id)
-        raw.load_data_in_memory(fmri_path=self.structure.raw.fmri_map)
+        raw.load_data_in_memory(fmri_path=file_structure.raw.fmri_map)
         return raw
 
 
-class SimpleCorrelationsDataset(DatasetBuilder):
-    def __init__(
-        self, save_dataset: bool = False, file_structure: Structure = structure
-    ):
-        super().__init__(SIMPLE_CORR_VERSION, save_dataset, file_structure)
+class SimpleCorrelationsDataset(Dataset):
+    def __init__(self):
+        super().__init__(SIMPLE_CORR_VERSION)
 
-    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
-        return raw.correlations
+    def build_dataset(self, raw: RawData, out_path: Path, save: bool = False) -> dd.DataFrame:
+        return raw.correlations.fillna(0)
 
-    def load_data(self, ids: np.ndarray, set_id: str) -> RawData:
+    def load_data(
+            self, ids: np.ndarray, set_id: str, file_structure: Structure
+    ) -> RawData:
         raw = RawData(ids, set_id)
-        raw.load_data_in_memory(self.structure.raw.correlations)
+        raw.load_data_in_memory(file_structure.raw.correlations)
         return raw

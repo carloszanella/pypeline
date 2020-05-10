@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 import numpy as np
 from sklearn.base import BaseEstimator
+from sklearn.multioutput import MultiOutputRegressor
 
 
 class Model(metaclass=ABCMeta):
@@ -37,7 +38,12 @@ class BenchmarkModel(Model):
 
 class SKLearnWrapper(Model):
     def __init__(self, model: BaseEstimator):
-        super().__init__(version=type(model).__name__)
+        if isinstance(model, MultiOutputRegressor):
+            name = type(model.estimator).__name__
+        else:
+            name = type(model).__name__
+
+        super().__init__(version=name)
         self.model = model
         self.params = model.get_params()
 

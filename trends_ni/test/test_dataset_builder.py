@@ -6,29 +6,28 @@ import pytest
 import pandas as pd
 
 from trends_ni.processing.dataset_builder import DatasetBuilder
+from trends_ni.processing.datasets import Dataset
 
 
 @pytest.fixture()
 def sample_dataset():
-    class DS(DatasetBuilder):
+    class DS(Dataset):
         def __init__(self):
-            self.version = None
-            self.save_dataset = None
-            self.structure = None
+            super().__init__("none")
 
-        def build_dataset(self, raw, out_path):
+        def build_dataset(self, raw, out_path, save=False):
             pass
 
-        def load_data(self, ids, set_id: str):
+        def load_data(self, ids, set_id: str, fs):
             pass
 
     return DS
 
 
 def test_dataset_maybe_build(raw_data_sample, sample_ids, sample_dataset):
-    ds_builder = sample_dataset()
-    ds_builder.load_data = Mock(spec=ds_builder.load_data, return_value=raw_data_sample)
-    ds_builder.build_dataset = Mock(spec=ds_builder.build_dataset)
+    ds_builder = DatasetBuilder(sample_dataset())
+    ds_builder.dataset.load_data = Mock(spec=ds_builder.dataset.load_data, return_value=raw_data_sample)
+    ds_builder.dataset.build_dataset = Mock(spec=ds_builder.dataset.build_dataset)
     ds_builder.process_target = Mock(spec=ds_builder.process_target)
 
     path = Path() / "test_id"
@@ -38,20 +37,20 @@ def test_dataset_maybe_build(raw_data_sample, sample_ids, sample_dataset):
 
     ds_builder.maybe_build_dataset(sample_ids, path, "test")
 
-    ds_builder.build_dataset.assert_not_called()
+    ds_builder.dataset.build_dataset.assert_not_called()
     ds_builder.process_target.assert_called_once_with(raw_data_sample)
     os.remove(path)
 
 
 def test_dataset_maybe_build_2(raw_data_sample, sample_ids, sample_dataset):
-    ds_builder = sample_dataset()
-    ds_builder.load_data = Mock(spec=ds_builder.load_data, return_value=raw_data_sample)
-    ds_builder.build_dataset = Mock(spec=ds_builder.build_dataset)
+    ds_builder = DatasetBuilder(sample_dataset())
+    ds_builder.dataset.load_data = Mock(spec=ds_builder.dataset.load_data, return_value=raw_data_sample)
+    ds_builder.dataset.build_dataset = Mock(spec=ds_builder.dataset.build_dataset)
     ds_builder.process_target = Mock(spec=ds_builder.process_target)
 
     path = Path("test_id")
 
     ds_builder.maybe_build_dataset(sample_ids, path, "test")
 
-    ds_builder.build_dataset.assert_called_once_with(raw_data_sample, path)
+    ds_builder.dataset.build_dataset.assert_called_once_with(raw_data_sample, path, False)
     ds_builder.process_target.assert_called_once_with(raw_data_sample)
