@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from logging import getLogger
+from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import Tuple
 
@@ -11,6 +11,7 @@ import dask.dataframe as dd
 from trends_ni.structure import Structure, structure
 
 log = getLogger(__name__)
+log.setLevel(DEBUG)
 
 
 class DatasetBuilder(metaclass=ABCMeta):

@@ -1,5 +1,5 @@
 import pickle
-from logging import getLogger
+from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import List, Tuple
 import pandas as pd
@@ -14,6 +14,7 @@ from trends_ni.structure import structure, Structure
 from trends_ni.training.model_trainer import ModelTrainer
 
 log = getLogger(__name__)
+log.setLevel(DEBUG)
 
 
 class PipelineOrchestrator:

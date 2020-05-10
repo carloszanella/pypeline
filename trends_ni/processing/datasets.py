@@ -1,4 +1,4 @@
-from logging import getLogger
+from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import List
 
@@ -14,6 +14,7 @@ FMRI_DS_VERSION = "fmri_ds_0.1"
 SIMPLE_CORR_VERSION = "rcorr_ds_0.1"
 BM_DS_VERSION = "bm_ds_0.1"
 log = getLogger(__name__)
+log.setLevel(DEBUG)
 
 
 class BenchmarkDataset(DatasetBuilder):

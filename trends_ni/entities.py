@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from logging import getLogger
+from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import List
 
@@ -13,6 +13,7 @@ from trends_ni.structure import structure
 from trends_ni.training.models import Model
 
 log = getLogger(__name__)
+log.setLevel(DEBUG)
 
 
 @dataclass

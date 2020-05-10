@@ -1,4 +1,4 @@
-from logging import getLogger
+from logging import getLogger, DEBUG
 
 import numpy as np
 
@@ -7,6 +7,7 @@ from trends_ni.evaluation.score import Score
 from trends_ni.training.models import Model
 
 log = getLogger(__name__)
+log.setLevel(DEBUG)
 
 
 class ModelTrainer:
