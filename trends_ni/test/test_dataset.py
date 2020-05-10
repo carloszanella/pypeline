@@ -4,7 +4,9 @@ from unittest.mock import Mock
 from trends_ni.processing.datasets import (
     FMRIDataset,
     SimpleCorrelationsDataset,
-    BenchmarkDataset, Dataset,
+    BenchmarkDataset,
+    Dataset,
+    SimpleLoadingDataset,
 )
 from trends_ni.structure import structure
 
@@ -19,6 +21,7 @@ def test_dataset_abc_class():
 
         def load_data(self, ids, set_id: str, fs):
             pass
+
     ds = DS()
 
     assert ds.version
@@ -48,7 +51,10 @@ def test_fmri_make_fmri_features(raw_data_sample):
 def test_fmri_load_data(sample_ids):
     fmri_ds = FMRIDataset()
     assert (
-        fmri_ds.load_data(sample_ids[:2], "train", structure).fmri_maps[0].fmri_map.compute().any()
+        fmri_ds.load_data(sample_ids[:2], "train", structure)
+        .fmri_maps[0]
+        .fmri_map.compute()
+        .any()
     )
 
 
@@ -65,7 +71,10 @@ def test_simple_corr_load_data(tiny_files_structure, sample_ids):
     simple_corr_ds = SimpleCorrelationsDataset()
     simple_corr_ds.structure = tiny_files_structure
     assert (
-        simple_corr_ds.load_data(sample_ids, "test", tiny_files_structure).correlations.compute().any().any()
+        simple_corr_ds.load_data(sample_ids, "test", tiny_files_structure)
+        .correlations.compute()
+        .any()
+        .any()
     )
 
 
@@ -75,3 +84,21 @@ def test_benchmark_model_ds(tiny_files_structure, raw_data_sample, sample_ids):
     df = bm_ds.build_dataset(raw, Path())
     assert not df.compute().any().any()
     assert raw.y.any().any()
+
+
+def test_simple_loading_build_dataset(raw_data_sample, tiny_files_structure):
+    simple_loading_ds = SimpleLoadingDataset()
+    raw_data_sample.load_data_in_memory(loadings_path=tiny_files_structure.raw.loading)
+    ddf = simple_loading_ds.build_dataset(raw_data_sample, Path("test_path"))
+    assert ddf.compute().any().any()
+
+
+def test_simple_loading_load_data(tiny_files_structure, sample_ids):
+    simple_loading_ds = SimpleLoadingDataset()
+    simple_loading_ds.structure = tiny_files_structure
+    assert (
+        simple_loading_ds.load_data(sample_ids, "test", tiny_files_structure)
+        .loadings.compute()
+        .any()
+        .any()
+    )

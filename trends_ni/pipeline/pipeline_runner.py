@@ -19,7 +19,7 @@ log = getLogger(__name__)
 log.setLevel(DEBUG)
 
 
-class PipelineOrchestrator:
+class PipelineRunner:
     def __init__(
         self,
         dataset: Dataset,

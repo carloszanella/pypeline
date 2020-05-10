@@ -62,11 +62,11 @@ class RawData:
 
         # maybe load loading data
         if loadings_path:
-            self.loadings = self.load_loading_data(loadings_path)
+            self.load_loading_data(loadings_path)
 
         # maybe load ICN
         if icn_path:
-            self.icn = self.load_icn(icn_path)
+            self.load_icn(icn_path)
 
     def load_y(self, path: Path):
         y_train = pd.read_csv(path, index_col=0)
