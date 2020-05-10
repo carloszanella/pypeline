@@ -39,7 +39,7 @@ class DatasetBuilder(metaclass=ABCMeta):
             ddf = dd.read_parquet(dataset_path)
             df = ddf.compute()
         else:
-            df = self.dataset.build_dataset(raw, dataset_path, self.save_dataset)
+            df = self.dataset.build_dataset(raw, dataset_path, self.save_dataset).compute()
 
         return df, y
 

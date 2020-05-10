@@ -8,7 +8,7 @@ import pandas as pd
 from trends_ni.entities import TrainingResults
 from trends_ni.processing.dataset_builder import DatasetBuilder
 from trends_ni.processing.datasets import BenchmarkDataset
-from trends_ni.pipeline.pipeline_runner import PipelineRunner
+from trends_ni.pipeline.pipeline_runner import PipelineRunner, MultipleModelRunner
 from trends_ni.training.model_trainer import ModelTrainer
 from trends_ni.training.models import BenchmarkModel
 
@@ -115,3 +115,12 @@ def test_save_results(tiny_files_structure):
 
     assert path.exists()
     os.remove(path)
+
+
+def test_multiple_model_runner_run_pipelines(sample_ids, tiny_files_structure):
+    training_list = [(BenchmarkDataset(), BenchmarkModel())] * 2
+    params = {"file_structure": tiny_files_structure}
+    multi_runner = MultipleModelRunner(training_list, pipeline_params=params)
+    results = multi_runner.run_multiple_pipelines(sample_ids, 0.25)
+
+    assert results

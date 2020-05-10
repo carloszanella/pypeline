@@ -29,7 +29,7 @@ class PipelineRunner:
         scaler: StandardScaler = StandardScaler(),
         seed: int = 42,
         save_results: bool = False,
-        save_dataset: bool = False
+        save_dataset: bool = False,
     ):
         self.ds_builder = DatasetBuilder(dataset, save_dataset, file_structure)
         self.model_trainer = ModelTrainer(model)
@@ -105,3 +105,20 @@ class PipelineRunner:
 
         with open(results.model_path, "wb") as fp:
             pickle.dump(results, fp)
+
+
+class MultipleModelRunner(PipelineRunner):
+    def __init__(self, training_list: List[Tuple[Dataset, Model]], pipeline_params: dict = {}):
+        self.training_list = training_list
+        self.pipeline_params = pipeline_params
+
+    def run_multiple_pipelines(
+        self, ids: List[float], val_split: float = 0.2
+    ) -> List[TrainingResults]:
+        results = []
+
+        for ds, model in self.training_list:
+            super().__init__(ds, model, **self.pipeline_params)
+            results.append(self.run_pipeline(ids, val_split))
+
+        return results
