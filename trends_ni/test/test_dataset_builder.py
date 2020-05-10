@@ -25,9 +25,10 @@ def sample_dataset():
 
 
 def test_dataset_maybe_build(raw_data_sample, sample_ids, sample_dataset):
-    ds_builder = DatasetBuilder(sample_dataset())
-    ds_builder.dataset.load_data = Mock(spec=ds_builder.dataset.load_data, return_value=raw_data_sample)
-    ds_builder.dataset.build_dataset = Mock(spec=ds_builder.dataset.build_dataset)
+    ds_builder = DatasetBuilder()
+    ds = sample_dataset()
+    ds.load_data = Mock(spec=ds.load_data, return_value=raw_data_sample)
+    ds.build_dataset = Mock(spec=ds.build_dataset)
     ds_builder.process_target = Mock(spec=ds_builder.process_target)
 
     path = Path() / "test_id"
@@ -35,22 +36,23 @@ def test_dataset_maybe_build(raw_data_sample, sample_ids, sample_dataset):
         path, compression="UNCOMPRESSED"
     )
 
-    ds_builder.maybe_build_dataset(sample_ids, path, "test")
+    ds_builder.maybe_build_dataset(sample_ids, ds, path, "test")
 
-    ds_builder.dataset.build_dataset.assert_not_called()
+    ds.build_dataset.assert_not_called()
     ds_builder.process_target.assert_called_once_with(raw_data_sample)
     os.remove(path)
 
 
 def test_dataset_maybe_build_2(raw_data_sample, sample_ids, sample_dataset):
-    ds_builder = DatasetBuilder(sample_dataset())
-    ds_builder.dataset.load_data = Mock(spec=ds_builder.dataset.load_data, return_value=raw_data_sample)
-    ds_builder.dataset.build_dataset = Mock(spec=ds_builder.dataset.build_dataset)
+    ds_builder = DatasetBuilder()
+    ds = sample_dataset()
+    ds.load_data = Mock(spec=ds.load_data, return_value=raw_data_sample)
+    ds.build_dataset = Mock(spec=ds.build_dataset)
     ds_builder.process_target = Mock(spec=ds_builder.process_target)
 
     path = Path("test_id")
 
-    ds_builder.maybe_build_dataset(sample_ids, path, "test")
+    ds_builder.maybe_build_dataset(sample_ids, ds, path, "test")
 
-    ds_builder.dataset.build_dataset.assert_called_once_with(raw_data_sample, path)
+    ds.build_dataset.assert_called_once_with(raw_data_sample, path)
     ds_builder.process_target.assert_called_once_with(raw_data_sample)

@@ -22,8 +22,6 @@ log.setLevel(DEBUG)
 class PipelineRunner:
     def __init__(
         self,
-        dataset: Dataset,
-        model: Model,
         file_structure: Structure = structure,
         splitter: DataSplitter = TrainValSplitter(),
         scaler: StandardScaler = StandardScaler(),
@@ -31,26 +29,29 @@ class PipelineRunner:
         save_results: bool = False,
         save_dataset: bool = False,
     ):
-        self.ds_builder = DatasetBuilder(dataset, file_structure)
-        self.model_trainer = ModelTrainer(model)
+        self.ds_builder = DatasetBuilder(file_structure)
+        self.model_trainer = ModelTrainer()
         self.scaler = scaler
         self.splitter = splitter
         self.seed = seed
         self.structure = file_structure
         self.save_res = save_results
         self.save_dataset = save_dataset
-
-    def run_pipeline(self, ids: List[float], val_split: float = 0.2) -> TrainingResults:
         np.random.seed(self.seed)
+
+    def run_pipeline(
+        self, ids: List[float], dataset: Dataset, model: Model, val_split: float = 0.2,
+    ) -> TrainingResults:
 
         train_ids, val_ids = self.splitter.split(ids, val_split)
 
-        X_train, y_train, X_val, y_val = self.build_datasets(train_ids, val_ids)
+        X_train, y_train, X_val, y_val = self.build_datasets(
+            dataset, train_ids, val_ids
+        )
 
-        results = self.model_trainer.train_model(X_train, y_train)
-        results.model_path = self.get_model_path()
-        results.train_ids = train_ids
-        results.val_ids = val_ids
+        results = self.model_trainer.train_model(model, X_train, y_train)
+
+        self.add_information_to_results(results, dataset, model, train_ids, val_ids)
 
         self.evaluate_validation_set(results, X_val, y_val)
 
@@ -60,19 +61,21 @@ class PipelineRunner:
         return results
 
     def build_datasets(
-        self, train_ids: np.ndarray, val_ids: np.ndarray
+        self, dataset: Dataset, train_ids: np.ndarray, val_ids: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
-        train_ds_id = f"{self.ds_builder.dataset.version}_{len(train_ids)}_{self.seed}"
+        train_ds_id = f"{dataset.version}_{len(train_ids)}_{self.seed}"
         train_ds_path = structure.dataset / train_ds_id
 
-        val_ds_id = f"{self.ds_builder.dataset.version}_{len(val_ids)}_{self.seed}"
+        val_ds_id = f"{dataset.version}_{len(val_ids)}_{self.seed}"
         val_ds_path = structure.dataset / val_ds_id
 
         X_train, y_train = self.ds_builder.maybe_build_dataset(
-            train_ids, train_ds_path, "train"
+            train_ids, dataset, train_ds_path, "train"
         )
-        X_val, y_val = self.ds_builder.maybe_build_dataset(val_ids, val_ds_path, "val")
+        X_val, y_val = self.ds_builder.maybe_build_dataset(
+            val_ids, dataset, val_ds_path, "val"
+        )
 
         if self.save_dataset:
             log.info(f"Saving training dataset to path: {train_ds_path}.")
@@ -92,9 +95,22 @@ class PipelineRunner:
 
         return X_train_scaled, X_val_scaled
 
-    def get_model_path(self) -> Path:
+    def add_information_to_results(
+        self,
+        results: TrainingResults,
+        dataset: Dataset,
+        model: Model,
+        train_ids: np.ndarray,
+        val_ids: np.ndarray,
+    ):
+        results.model_path = self.get_model_path(model, dataset)
+        results.train_ids = train_ids
+        results.val_ids = val_ids
+        results.dataset_version = dataset.version
+
+    def get_model_path(self, model: Model, dataset: Dataset) -> Path:
         model_dir = self.structure.model
-        model_id = f"{self.model_trainer.model.version}_{self.ds_builder.dataset.version}_{self.seed}.pkl"
+        model_id = f"{model.version}_{dataset.version}_{self.seed}.pkl"
         model_path = model_dir / model_id
         return model_path
 
@@ -114,18 +130,16 @@ class PipelineRunner:
             pickle.dump(results, fp)
 
 
-class MultipleModelRunner(PipelineRunner):
-    def __init__(self, training_list: List[Tuple[Dataset, Model]], pipeline_params: dict = {}):
+class MultipleModelRunner:
+    def __init__(self, training_list: List[Tuple[Dataset, Model]]):
         self.training_list = training_list
-        self.pipeline_params = pipeline_params
 
     def run_multiple_pipelines(
-        self, ids: List[float], val_split: float = 0.2
+        self, ids: List[float], runner: PipelineRunner, val_split: float = 0.2,
     ) -> List[TrainingResults]:
         results = []
 
         for ds, model in self.training_list:
-            super().__init__(ds, model, **self.pipeline_params)
-            results.append(self.run_pipeline(ids, val_split))
+            results.append(runner.run_pipeline(ids, ds, model, val_split))
 
         return results

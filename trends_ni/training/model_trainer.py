@@ -11,20 +11,17 @@ log.setLevel(DEBUG)
 
 
 class ModelTrainer:
-    def __init__(self, model: Model):
-        self.model = model
-
     def train_model(
-        self, X_train: np.ndarray, y_train: np.ndarray
+        self, model: Model, X_train: np.ndarray, y_train: np.ndarray
     ) -> TrainingResults:
         results = TrainingResults()
-        results.model_version = self.model.version
-        self.model.fit(X_train, y_train)
-        results.model = self.model
-        results.model_params = self.model.params
+        results.model_version = model.version
+        model.fit(X_train, y_train)
+        results.model = model
+        results.model_params = model.params
 
         scores, weighted_score = Score.evaluate_predictions(
-            y_train, self.model.predict(X_train)
+            y_train, model.predict(X_train)
         )
         results.train_mae, results.train_weighted_mae = scores, weighted_score
 

@@ -6,7 +6,7 @@ import numpy as np
 
 class DataSplitter(metaclass=ABCMeta):
     @abstractmethod
-    def split(self, ids: np.array, val_split: float) -> Tuple[np.array, np.array]:
+    def split(self, ids: np.array, val_split: float) -> Tuple[np.ndarray, np.ndarray]:
         pass
 
 

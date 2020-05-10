@@ -14,25 +14,17 @@ from trends_ni.training.models import BenchmarkModel
 
 
 def test_pipeline_runner_run_calls(tiny_files_structure, sample_ids):
-    runner = PipelineRunner(
-        dataset=BenchmarkDataset(),
-        file_structure=tiny_files_structure,
-        model=BenchmarkModel(),
-    )
+    runner = PipelineRunner(file_structure=tiny_files_structure,)
     runner.ds_builder = Mock(spec=DatasetBuilder)
     runner.model_trainer = Mock(spec=ModelTrainer)
 
     runner.get_model_path = Mock(spec=runner.get_model_path)
-    runner.build_datasets = Mock(
-        spec=runner.build_datasets, return_value=(0, 0, 0, 0)
+    runner.build_datasets = Mock(spec=runner.build_datasets, return_value=(0, 0, 0, 0))
+    runner.splitter.split = Mock(spec=runner.splitter.split, return_value=(0, 0))
+    runner.evaluate_validation_set = Mock(spec=runner.evaluate_validation_set)
+    runner.run_pipeline(
+        sample_ids, dataset=BenchmarkDataset(), model=BenchmarkModel(),
     )
-    runner.splitter.split = Mock(
-        spec=runner.splitter.split, return_value=(0, 0)
-    )
-    runner.evaluate_validation_set = Mock(
-        spec=runner.evaluate_validation_set
-    )
-    runner.run_pipeline(sample_ids)
 
     runner.splitter.split.assert_called_once_with(sample_ids, 0.2)
     runner.build_datasets.assert_called_once()
@@ -43,12 +35,10 @@ def test_pipeline_runner_run_calls(tiny_files_structure, sample_ids):
 
 def test_pipeline_runner_build_datasets(sample_ids, tiny_files_structure):
     runner = PipelineRunner(
-        dataset=BenchmarkDataset(),
         file_structure=tiny_files_structure,
-        model=BenchmarkModel(),
     )
     X_train, y_train, X_val, y_val = runner.build_datasets(
-        sample_ids[:-2], sample_ids[-2:]
+        BenchmarkDataset(), sample_ids[:-2], sample_ids[-2:]
     )
 
     assert X_train.any()
@@ -57,12 +47,8 @@ def test_pipeline_runner_build_datasets(sample_ids, tiny_files_structure):
     assert y_val.any()
 
 
-def test_pipeline_runner_scale_datasets(tiny_files_structure):
-    runner = PipelineRunner(
-        dataset=BenchmarkDataset(),
-        file_structure=tiny_files_structure,
-        model=BenchmarkModel(),
-    )
+def test_pipeline_runner_scale_datasets():
+    runner = PipelineRunner()
     x_tr = pd.DataFrame(np.random.random((20, 20)))
     x_val = pd.DataFrame(np.random.random((10, 20)))
     x_tr_scaled, x_val_scaled = runner.scale_datasets(x_tr, x_val)
@@ -71,24 +57,19 @@ def test_pipeline_runner_scale_datasets(tiny_files_structure):
     assert x_val_scaled.any()
 
 
-def test_get_model_path(tiny_files_structure):
-    runner = PipelineRunner(
-        dataset=BenchmarkDataset(),
-        file_structure=tiny_files_structure,
-        model=BenchmarkModel(),
-    )
+def test_get_model_path():
+    runner = PipelineRunner()
 
-    path = runner.get_model_path()
+    model = BenchmarkModel()
+    dataset = BenchmarkDataset()
+    path = runner.get_model_path(model=model, dataset=dataset)
     assert path
-    assert runner.model_trainer.model.version in path.stem
+    assert model.version in path.stem
+    assert dataset.version in path.stem
 
 
-def test_evaluate_validation_set(tiny_files_structure):
-    runner = PipelineRunner(
-        dataset=BenchmarkDataset(),
-        file_structure=tiny_files_structure,
-        model=BenchmarkModel(),
-    )
+def test_evaluate_validation_set():
+    runner = PipelineRunner()
 
     x_val = np.random.random((10, 20))
     y_val = np.random.random((10, 5))
@@ -101,13 +82,8 @@ def test_evaluate_validation_set(tiny_files_structure):
     assert results.validation_mae
 
 
-def test_save_results(tiny_files_structure):
-    runner = PipelineRunner(
-        dataset=BenchmarkDataset(),
-        file_structure=tiny_files_structure,
-        model=BenchmarkModel(),
-    )
-
+def test_save_results():
+    runner = PipelineRunner()
     path = Path("test.pkl")
     results = TrainingResults(model_path=path)
 
@@ -117,10 +93,25 @@ def test_save_results(tiny_files_structure):
     os.remove(path)
 
 
+def test_add_info_to_results(sample_ids):
+    runner = PipelineRunner()
+    ds, model = BenchmarkDataset(), BenchmarkModel()
+    results = TrainingResults()
+    runner.add_information_to_results(results, ds, model, sample_ids, sample_ids)
+
+    assert results.model_path
+    assert results.train_ids.any()
+    assert results.val_ids.any()
+    assert results.dataset_version
+
+
 def test_multiple_model_runner_run_pipelines(sample_ids, tiny_files_structure):
     training_list = [(BenchmarkDataset(), BenchmarkModel())] * 2
-    params = {"file_structure": tiny_files_structure}
-    multi_runner = MultipleModelRunner(training_list, pipeline_params=params)
-    results = multi_runner.run_multiple_pipelines(np.concatenate([sample_ids, sample_ids]), 0.5)
+    runner = PipelineRunner(tiny_files_structure)
+    runner.splitter.split = lambda *args: (sample_ids, sample_ids)
+    multi_runner = MultipleModelRunner(training_list)
+    results = multi_runner.run_multiple_pipelines(
+        sample_ids, runner, 0.5
+    )
 
     assert results

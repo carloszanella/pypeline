@@ -96,6 +96,7 @@ class RawData:
 @dataclass
 class TrainingResults:
     model_version: str = None
+    dataset_version: str = None
     model: Model = None
     model_params: dict = None
     train_mae: List[float] = None
@@ -107,7 +108,7 @@ class TrainingResults:
     val_ids: np.ndarray = None
 
     def print_score_results(self):
-        print(f"Scores for model {self.model_version}")
+        print(f"Scores for model {self.model_version} - {self.dataset_version}")
         print("#########################################")
         print("Train MAE: ", self.train_mae)
         print("Train Weighted MAE: ", self.train_weighted_mae)

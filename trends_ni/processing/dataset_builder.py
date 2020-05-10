@@ -1,4 +1,3 @@
-from abc import ABCMeta, abstractmethod
 from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import Tuple
@@ -15,21 +14,19 @@ log = getLogger(__name__)
 log.setLevel(DEBUG)
 
 
-class DatasetBuilder(metaclass=ABCMeta):
+class DatasetBuilder:
     def __init__(
         self,
-        dataset: Dataset,
         file_structure: Structure = structure,
     ):
-        self.dataset = dataset
         self.structure = file_structure
 
     def maybe_build_dataset(
-        self, ids: np.array, dataset_path: Path, set_id: str,
+        self, ids: np.array, dataset: Dataset, dataset_path: Path, set_id: str,
     ) -> Tuple[pd.DataFrame, np.array]:
         log.info(f"Building {set_id} dataset. WIll be saved on {dataset_path}.")
 
-        raw = self.dataset.load_data(ids, set_id, self.structure)
+        raw = dataset.load_data(ids, set_id, self.structure)
         y = self.process_target(raw)
 
         if dataset_path.exists():
@@ -37,7 +34,7 @@ class DatasetBuilder(metaclass=ABCMeta):
             ddf = dd.read_parquet(dataset_path)
             df = ddf.compute()
         else:
-            df = self.dataset.build_dataset(raw, dataset_path).compute()
+            df = dataset.build_dataset(raw, dataset_path).compute()
 
         return df, y
 
