@@ -121,6 +121,6 @@ def test_multiple_model_runner_run_pipelines(sample_ids, tiny_files_structure):
     training_list = [(BenchmarkDataset(), BenchmarkModel())] * 2
     params = {"file_structure": tiny_files_structure}
     multi_runner = MultipleModelRunner(training_list, pipeline_params=params)
-    results = multi_runner.run_multiple_pipelines(sample_ids, 0.25)
+    results = multi_runner.run_multiple_pipelines(sample_ids, 0.5)
 
     assert results

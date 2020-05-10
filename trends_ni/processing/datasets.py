@@ -45,7 +45,7 @@ class BenchmarkDataset(Dataset):
         self, raw: RawData, out_path: Path, save: bool = False
     ) -> dd.DataFrame:
         size = raw.y.shape[0]
-        return dd.from_array(np.array([1] * size).reshape(-1, 1))
+        return dd.from_array(np.array([np.nan] * size).reshape(-1, 1))
 
     def load_data(
         self, ids: np.ndarray, set_id: str, file_structure: Structure
