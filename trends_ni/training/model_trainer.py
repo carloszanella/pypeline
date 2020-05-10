@@ -21,6 +21,7 @@ class ModelTrainer:
         results.model_version = self.model.version
         self.model.fit(X_train, y_train)
         results.model = self.model
+        results.model_params = self.model.params
 
         scores, weighted_score = Score.evaluate_predictions(
             y_train, self.model.predict(X_train)

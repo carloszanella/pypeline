@@ -14,6 +14,6 @@ def test_train_model(tiny_files_structure):
     )
 
     results = trainer.train_model(X_train, y_train)
-    assert results.model.mean_values.all()
+    assert results.model.params["mean_values"].all()
     assert results.train_mae
     assert results.train_weighted_mae

@@ -97,6 +97,7 @@ class RawData:
 class TrainingResults:
     model_version: str = None
     model: Model = None
+    model_params: dict = None
     train_mae: List[float] = None
     train_weighted_mae: float = None
     validation_mae: List[float] = None
