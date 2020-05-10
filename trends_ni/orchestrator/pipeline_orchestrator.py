@@ -10,8 +10,10 @@ from trends_ni.evaluation.score import Score
 from trends_ni.processing.data_splitter import TrainValSplitter, DataSplitter
 from trends_ni.processing.dataset_builder import DatasetBuilder
 from trends_ni.entities import TrainingResults
+from trends_ni.processing.datasets import Dataset
 from trends_ni.structure import structure, Structure
 from trends_ni.training.model_trainer import ModelTrainer
+from trends_ni.training.models import Model
 
 log = getLogger(__name__)
 log.setLevel(DEBUG)
@@ -20,16 +22,17 @@ log.setLevel(DEBUG)
 class PipelineOrchestrator:
     def __init__(
         self,
-        ds_builder: DatasetBuilder,
-        model_trainer: ModelTrainer,
+        dataset: Dataset,
+        model: Model,
         file_structure: Structure = structure,
         splitter: DataSplitter = TrainValSplitter(),
         scaler: StandardScaler = StandardScaler(),
         seed: int = 42,
         save_results: bool = False,
+        save_dataset: bool = False
     ):
-        self.ds_builder = ds_builder
-        self.model_trainer = model_trainer
+        self.ds_builder = DatasetBuilder(dataset, save_dataset, file_structure)
+        self.model_trainer = ModelTrainer(model)
         self.scaler = scaler
         self.splitter = splitter
         self.seed = seed

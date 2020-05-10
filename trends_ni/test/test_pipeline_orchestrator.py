@@ -15,8 +15,13 @@ from trends_ni.training.models import BenchmarkModel
 
 def test_pipeline_orchestrator_run_calls(tiny_files_structure, sample_ids):
     orchestrator = PipelineOrchestrator(
-        ds_builder=Mock(spec=BenchmarkDataset), model_trainer=Mock(spec=ModelTrainer)
+        dataset=BenchmarkDataset(),
+        file_structure=tiny_files_structure,
+        model=BenchmarkModel(),
     )
+    orchestrator.ds_builder = Mock(spec=DatasetBuilder)
+    orchestrator.model_trainer = Mock(spec=ModelTrainer)
+
     orchestrator.get_model_path = Mock(spec=orchestrator.get_model_path)
     orchestrator.build_datasets = Mock(
         spec=orchestrator.build_datasets, return_value=(0, 0, 0, 0)
@@ -38,8 +43,9 @@ def test_pipeline_orchestrator_run_calls(tiny_files_structure, sample_ids):
 
 def test_pipeline_orchestrator_build_datasets(sample_ids, tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
-        model_trainer=ModelTrainer(BenchmarkModel()),
+        dataset=BenchmarkDataset(),
+        file_structure=tiny_files_structure,
+        model=BenchmarkModel(),
     )
     X_train, y_train, X_val, y_val = orchestrator.build_datasets(
         sample_ids[:-2], sample_ids[-2:]
@@ -53,8 +59,9 @@ def test_pipeline_orchestrator_build_datasets(sample_ids, tiny_files_structure):
 
 def test_pipeline_orchestrator_scale_datasets(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
-        model_trainer=ModelTrainer(BenchmarkModel()),
+        dataset=BenchmarkDataset(),
+        file_structure=tiny_files_structure,
+        model=BenchmarkModel(),
     )
     x_tr = pd.DataFrame(np.random.random((20, 20)))
     x_val = pd.DataFrame(np.random.random((10, 20)))
@@ -66,8 +73,9 @@ def test_pipeline_orchestrator_scale_datasets(tiny_files_structure):
 
 def test_get_model_path(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
-        model_trainer=ModelTrainer(BenchmarkModel()),
+        dataset=BenchmarkDataset(),
+        file_structure=tiny_files_structure,
+        model=BenchmarkModel(),
     )
 
     path = orchestrator.get_model_path()
@@ -77,8 +85,9 @@ def test_get_model_path(tiny_files_structure):
 
 def test_evaluate_validation_set(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
-        model_trainer=ModelTrainer(BenchmarkModel()),
+        dataset=BenchmarkDataset(),
+        file_structure=tiny_files_structure,
+        model=BenchmarkModel(),
     )
 
     x_val = np.random.random((10, 20))
@@ -94,8 +103,9 @@ def test_evaluate_validation_set(tiny_files_structure):
 
 def test_save_results(tiny_files_structure):
     orchestrator = PipelineOrchestrator(
-        ds_builder=DatasetBuilder(BenchmarkDataset(), file_structure=tiny_files_structure),
-        model_trainer=ModelTrainer(BenchmarkModel()),
+        dataset=BenchmarkDataset(),
+        file_structure=tiny_files_structure,
+        model=BenchmarkModel(),
     )
 
     path = Path("test.pkl")
