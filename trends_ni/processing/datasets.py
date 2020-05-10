@@ -25,9 +25,7 @@ class Dataset(metaclass=ABCMeta):
         self.version = version
 
     @abstractmethod
-    def build_dataset(
-        self, raw: RawData, out_path: Path, save: bool = False
-    ) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         pass
 
     @abstractmethod
@@ -41,9 +39,7 @@ class BenchmarkDataset(Dataset):
     def __init__(self):
         super().__init__(BM_DS_VERSION)
 
-    def build_dataset(
-        self, raw: RawData, out_path: Path, save: bool = False
-    ) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         size = raw.y.shape[0]
         return dd.from_array(np.array([np.nan] * size).reshape(-1, 1))
 
@@ -60,15 +56,9 @@ class FMRIDataset(Dataset):
         super().__init__(FMRI_DS_VERSION)
         self.n_maps = 53
 
-    def build_dataset(
-        self, raw: RawData, out_path: Path, save: bool = False
-    ) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         raw.load_data_in_memory(fmri_path=structure.raw.fmri_map)
         ddf = self.make_fmri_features(raw.fmri_maps)
-
-        if save:
-            log.info(f"Saving dataset to path: {out_path}.")
-            ddf.to_parquet(out_path)
 
         return ddf
 
@@ -106,9 +96,7 @@ class SimpleCorrelationsDataset(Dataset):
     def __init__(self):
         super().__init__(SIMPLE_CORR_VERSION)
 
-    def build_dataset(
-        self, raw: RawData, out_path: Path, save: bool = False
-    ) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         return raw.correlations.fillna(0)
 
     def load_data(
@@ -123,9 +111,7 @@ class SimpleLoadingDataset(Dataset):
     def __init__(self):
         super().__init__(SIMPLE_LOADING_VERSION)
 
-    def build_dataset(
-        self, raw: RawData, out_path: Path, save: bool = False
-    ) -> dd.DataFrame:
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         return raw.loadings.fillna(0)
 
     def load_data(

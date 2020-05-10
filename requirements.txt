@@ -6,3 +6,4 @@ confuse
 numpy
 pathlib
 pytest
+xgboost

@@ -38,13 +38,9 @@ class BenchmarkModel(Model):
 
 class SKLearnWrapper(Model):
     def __init__(self, model: BaseEstimator):
-        if isinstance(model, MultiOutputRegressor):
-            name = type(model.estimator).__name__
-        else:
-            name = type(model).__name__
-
+        name = type(model).__name__
         super().__init__(version=name)
-        self.model = model
+        self.model = MultiOutputRegressor(model, -1)
         self.params = model.get_params()
 
     def predict(self, X: np.ndarray) -> np.ndarray:

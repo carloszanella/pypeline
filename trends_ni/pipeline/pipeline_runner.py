@@ -37,7 +37,8 @@ class PipelineRunner:
         self.splitter = splitter
         self.seed = seed
         self.structure = file_structure
-        self.save = save_results
+        self.save_results = save_results
+        self.save_dataset = save_dataset
 
     def run_pipeline(self, ids: List[float], val_split: float = 0.2) -> TrainingResults:
         np.random.seed(self.seed)
@@ -53,7 +54,7 @@ class PipelineRunner:
 
         self.evaluate_validation_set(results, X_val, y_val)
 
-        if self.save:
+        if self.save_results:
             self.save_results(results)
 
         return results
@@ -72,6 +73,12 @@ class PipelineRunner:
             train_ids, train_ds_path, "train"
         )
         X_val, y_val = self.ds_builder.maybe_build_dataset(val_ids, val_ds_path, "val")
+
+        if self.save_dataset:
+            log.info(f"Saving training dataset to path: {train_ds_path}.")
+            X_train.to_parquet(train_ds_path)
+            log.info(f"Saving training dataset to path: {val_ds_path}.")
+            X_val.to_parquet(val_ds_path)
 
         X_train, X_val = self.scale_datasets(X_train, X_val)
 

@@ -19,11 +19,9 @@ class DatasetBuilder(metaclass=ABCMeta):
     def __init__(
         self,
         dataset: Dataset,
-        save_dataset: bool = False,
         file_structure: Structure = structure,
     ):
         self.dataset = dataset
-        self.save_dataset = save_dataset
         self.structure = file_structure
 
     def maybe_build_dataset(
@@ -39,7 +37,7 @@ class DatasetBuilder(metaclass=ABCMeta):
             ddf = dd.read_parquet(dataset_path)
             df = ddf.compute()
         else:
-            df = self.dataset.build_dataset(raw, dataset_path, self.save_dataset).compute()
+            df = self.dataset.build_dataset(raw, dataset_path).compute()
 
         return df, y
 
