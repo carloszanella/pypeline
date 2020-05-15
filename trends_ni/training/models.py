@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
+from typing import List
 
 import numpy as np
 from sklearn.base import BaseEstimator
@@ -40,7 +41,7 @@ class SKLearnWrapper(Model):
     def __init__(self, model: BaseEstimator):
         name = type(model).__name__
         super().__init__(version=name)
-        self.model = MultiOutputRegressor(model, -1)
+        self.model = model
         self.params = model.get_params()
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -48,4 +49,25 @@ class SKLearnWrapper(Model):
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> Model:
         self.model.fit(X, y)
+        return self
+
+
+class SKLearnMultiModelWrapper(Model):
+    def __init__(self, models: List[BaseEstimator]):
+        super().__init__(version="multi-model")
+        self.models = models
+        self.params = [model.get_params() for model in models]
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        predictions = np.zeros((X.shape[0], 5))
+
+        for i, model in enumerate(self.models):
+            predictions[:, i] = model.predict(X)
+
+        return predictions
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Model:
+        for i, model in enumerate(self.models):
+            model.fit(X, y[:, i])
+
         return self

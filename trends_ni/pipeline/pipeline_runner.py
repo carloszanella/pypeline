@@ -121,6 +121,7 @@ class PipelineRunner:
         val_mae, val_weighted_mae = Score.evaluate_predictions(y_val, y_val_pred)
         results.validation_mae = val_mae
         results.validation_weighted_mae = val_weighted_mae
+        results.print_score_results()
 
     def save_results(self, results: TrainingResults):
         results.model_path.parent.mkdir(exist_ok=True)

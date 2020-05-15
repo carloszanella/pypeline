@@ -109,8 +109,8 @@ class TrainingResults:
 
     def print_score_results(self):
         print(f"Scores for model {self.model_version} - {self.dataset_version}")
-        print("#########################################")
+        print("---------------------------------------------------\n")
         print("Train MAE: ", self.train_mae)
         print("Train Weighted MAE: ", self.train_weighted_mae)
-        print("Validation MAE: ", self.train_mae)
-        print("Validation Weighted MAE: ", self.train_weighted_mae)
+        print("Validation MAE: ", self.validation_mae)
+        print("Validation Weighted MAE: ", self.validation_weighted_mae)

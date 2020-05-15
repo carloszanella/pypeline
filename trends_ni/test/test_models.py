@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-from trends_ni.training.models import BenchmarkModel, SKLearnWrapper
+from trends_ni.training.models import BenchmarkModel, SKLearnWrapper, SKLearnMultiModelWrapper
 
 
 def test_benchmark_model_fit(tiny_files_structure):
@@ -32,3 +32,11 @@ def test_sklearn_wrapper_init():
     lin_reg.fit(np.random.random((100, 2)), np.ones((100,5)))
     assert lin_reg.predict(np.random.random((10, 2))).all()
     assert lin_reg.params
+
+
+def test_sklearn_multi_wrapper_init():
+    params = {"fit_intercept": True}
+    lin_reg = SKLearnMultiModelWrapper(models=[LinearRegression(**params)] * 5)
+    lin_reg.fit(np.random.random((100, 2)), np.ones((100,5)))
+    assert lin_reg.predict(np.random.random((10, 2))).all()
+    assert len(lin_reg.params) == 5
