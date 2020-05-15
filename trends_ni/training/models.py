@@ -4,6 +4,7 @@ from typing import List
 
 import numpy as np
 from sklearn.base import BaseEstimator
+from sklearn.model_selection import KFold
 from sklearn.multioutput import MultiOutputRegressor
 
 
@@ -52,11 +53,12 @@ class SKLearnWrapper(Model):
         return self
 
 
-class SKLearnMultiModelWrapper(Model):
-    def __init__(self, models: List[BaseEstimator]):
+class MultiModelWrapper(Model):
+    def __init__(self, models: List[Model]):
         super().__init__(version="multi-model")
+        assert len(models) == 5, "Number of models must be five"
         self.models = models
-        self.params = [model.get_params() for model in models]
+        self.params = [model.params for model in models]
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         predictions = np.zeros((X.shape[0], 5))
@@ -71,3 +73,56 @@ class SKLearnMultiModelWrapper(Model):
             model.fit(X, y[:, i])
 
         return self
+
+
+class ModelEnsembler(Model):
+    def __init__(self, ensembler: Model, children: List[Model], n_fols: int = 5):
+        super().__init__(version=f"ensemble-{ensembler.version}")
+        self.ensembler = ensembler
+        self.children = children
+        self.params = self.get_ensemble_params()
+        self.n_folds = n_folds
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        child_predictions = self.make_child_dataset(X)
+        predict_ds = np.concatenate([X, child_predictions], axis=1)
+        predictions = self.ensembler.predict(predict_ds)
+
+        return predictions
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Model:
+        child_predictions = self.make_child_dataset(X, y)
+
+        return self
+
+    def get_ensemble_params(self):
+        params = {}
+
+        for child in self.children:
+            params[child.version] = child.params
+
+        params["ensembler"] = self.ensembler.params
+
+        return params
+
+    def make_child_dataset(self, X: np.ndarray, y: np.ndarray = None) -> np.ndarray:
+
+        if y is None:
+            dataset = self.predict_with_children(X)
+
+        else:
+            dataset = self.oof_predict_with_children(X, y)
+
+        return dataset
+
+    def predict_with_children(self, X: np.ndarray) -> np.ndarray:
+        preds = [child.predict(X) for child in self.children]
+        preds = np.concatenate(preds, axis=1)
+
+        return preds
+
+    def oof_predict_with_children(self, X, y) -> np.ndarray:
+        kfold = KFold(self.n_folds)
+        preds = np.zeros(y.shape)
+        for train_ix, val_ix in kfold.split(X):
+            pass  # TODO

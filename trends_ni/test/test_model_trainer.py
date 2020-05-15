@@ -6,7 +6,7 @@ from trends_ni.training.model_trainer import ModelTrainer
 from trends_ni.training.models import BenchmarkModel
 
 
-def test_train_model(tiny_files_structure):
+def test_model_trainer(tiny_files_structure):
     trainer = ModelTrainer()
     X_train = pd.read_csv(tiny_files_structure.raw.correlations, index_col=0)
     y_train = (
