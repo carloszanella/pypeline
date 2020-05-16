@@ -51,3 +51,13 @@ def sample_predictions():
             [50.10695451, 47.61899496, 54.78646754, 47.06653996, 51.58750525],
         ]
     )
+
+
+@pytest.fixture
+def X():
+    return np.random.random((100, 2))
+
+
+@pytest.fixture
+def y():
+    return np.ones((100, 5))

@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import List
+from sklearn.decomposition import PCA
 
 from trends_ni.entities import SubjectFMRI, RawData
 from trends_ni.structure import structure, Structure
@@ -120,3 +121,33 @@ class SimpleLoadingDataset(Dataset):
         raw = RawData(ids, set_id)
         raw.load_data_in_memory(loadings_path=file_structure.raw.loading)
         return raw
+
+
+class PCAWrapper(Dataset):
+    def __init__(self, dataset: Dataset, n_features: int = 5):
+        super().__init__(f"pca_{dataset.version}")
+        self.dataset = dataset
+        self.n_features = n_features
+        self.pca = PCA(self.n_features)
+
+    def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
+        full_ds = super().build_dataset(raw, out_path)
+        if raw.set_id == "train":
+            pca_array = self.pca.fit_transform(full_ds)
+        else:
+            pca_array = self.pca.transform(full_ds)
+
+        pca_ddf = self.make_pca_ddf(pca_array)
+
+        return pca_ddf
+
+    def load_data(
+        self, ids: np.ndarray, set_id: str, file_structure: Structure
+    ) -> RawData:
+        raw = super().load_data(ids, set_id, file_structure)
+        return raw
+
+    def make_pca_ddf(self, pca_array: np.ndarray) -> dd.DataFrame:
+        columns = [f"pca-{i}" for i in range(self.n_features)]
+        pca_ddf = dd.from_array(pca_array, columns=columns)
+        return pca_ddf

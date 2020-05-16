@@ -39,9 +39,12 @@ class BenchmarkModel(Model):
 
 
 class SKLearnWrapper(Model):
-    def __init__(self, model: BaseEstimator):
+    def __init__(self, model: BaseEstimator, multi_output: bool = False):
         name = type(model).__name__
         super().__init__(version=name)
+        if multi_output:
+            model = MultiOutputRegressor(model, -1)
+
         self.model = model
         self.params = model.get_params()
 
@@ -76,7 +79,7 @@ class MultiModelWrapper(Model):
 
 
 class ModelEnsembler(Model):
-    def __init__(self, ensembler: Model, children: List[Model], n_fols: int = 5):
+    def __init__(self, ensembler: Model, children: List[Model], n_folds: int = 5):
         super().__init__(version=f"ensemble-{ensembler.version}")
         self.ensembler = ensembler
         self.children = children
@@ -92,6 +95,9 @@ class ModelEnsembler(Model):
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> Model:
         child_predictions = self.make_child_dataset(X, y)
+        ensemble_dataset = np.concatenate([X, child_predictions], axis=1)
+        print(ensemble_dataset.shape)
+        self.ensembler.fit(ensemble_dataset, y)
 
         return self
 
@@ -123,6 +129,17 @@ class ModelEnsembler(Model):
 
     def oof_predict_with_children(self, X, y) -> np.ndarray:
         kfold = KFold(self.n_folds)
-        preds = np.zeros(y.shape)
+        oof_preds = [np.zeros((y.shape))] * len(self.children)
+
         for train_ix, val_ix in kfold.split(X):
-            pass  # TODO
+            x_train, y_train = X[train_ix], y[train_ix]
+            x_val, y_val = X[val_ix], y[val_ix]
+
+            for c, child in enumerate(self.children):
+                child.fit(x_train, y_train)
+                oof_preds[c][val_ix] = child.predict(x_val)
+
+        _ = [child.fit(X, y) for child in self.children]
+        oof_preds = np.concatenate(oof_preds, axis=1)
+
+        return oof_preds

@@ -6,7 +6,7 @@ from trends_ni.processing.datasets import (
     SimpleCorrelationsDataset,
     BenchmarkDataset,
     Dataset,
-    SimpleLoadingDataset,
+    SimpleLoadingDataset, PCAWrapper,
 )
 from trends_ni.structure import structure
 
@@ -102,3 +102,25 @@ def test_simple_loading_load_data(tiny_files_structure, sample_ids):
         .any()
         .any()
     )
+
+
+def test_pca_wrapper(raw_data_sample, tiny_files_structure):
+    simple_loading_ds = SimpleLoadingDataset()
+    raw_data_sample.load_data_in_memory(loadings_path=tiny_files_structure.raw.loading)
+    pca_wrapper = PCAWrapper(simple_loading_ds, 2)
+    pca_wrapper.pca = Mock(spec=pca_wrapper.pca)
+    pca_wrapper.make_pca_ddf = Mock(spec=pca_wrapper.make_pca_ddf)
+
+    pca_ds = pca_wrapper.build_dataset(raw_data_sample, Path("test"))
+
+    pca_wrapper.pca.fit_transform.assert_called_once()
+    pca_wrapper.make_pca_ddf.assert_called_once()
+
+
+def test_pca_make_ddf(raw_data_sample, tiny_files_structure, X):
+    simple_loading_ds = SimpleLoadingDataset()
+    raw_data_sample.load_data_in_memory(loadings_path=tiny_files_structure.raw.loading)
+    pca_wrapper = PCAWrapper(simple_loading_ds, 2)
+
+    pca_ddf = pca_wrapper.make_pca_ddf(X)
+    assert (pca_ddf.columns == ["pca-0", "pca-1"]).all()

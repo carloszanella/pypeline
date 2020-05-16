@@ -8,16 +8,6 @@ from sklearn.linear_model import LinearRegression
 from trends_ni.training.models import BenchmarkModel, SKLearnWrapper as SKW, MultiModelWrapper, ModelEnsembler
 
 
-@pytest.fixture
-def X():
-    return np.random.random((100, 2))
-
-
-@pytest.fixture
-def y():
-    return np.ones((100, 5))
-
-
 def test_benchmark_model_fit(tiny_files_structure):
     bm_model = BenchmarkModel()
     y_train = pd.read_csv(tiny_files_structure.raw.y_train, index_col=0)
@@ -75,6 +65,13 @@ def test_model_ensembler_train(X, y, children_and_ensembler):
 
     model_ensembler.fit(X, y)
     assert model_ensembler.predict(np.random.random((10, 2))).all()
+
+
+def test_ensembler_fit(X, y, children_and_ensembler):
+    children, ensembler = children_and_ensembler
+    model_ensembler = ModelEnsembler(children=children, ensembler=ensembler)
+    model_ensembler.fit(X, y)
+    assert model_ensembler.ensembler.model.intercept_.any()
 
 
 def test_ensembler_child_dataset(X, y, children_and_ensembler):

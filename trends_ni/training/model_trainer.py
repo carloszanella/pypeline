@@ -25,6 +25,4 @@ class ModelTrainer:
         )
         results.train_mae, results.train_weighted_mae = scores, weighted_score
 
-        results.print_score_results()
-
         return results
