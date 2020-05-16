@@ -131,7 +131,7 @@ class PCAWrapper(Dataset):
         self.pca = PCA(self.n_features)
 
     def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
-        full_ds = super().build_dataset(raw, out_path)
+        full_ds = self.dataset.build_dataset(raw, out_path)
         if raw.set_id == "train":
             pca_array = self.pca.fit_transform(full_ds)
         else:
@@ -144,7 +144,7 @@ class PCAWrapper(Dataset):
     def load_data(
         self, ids: np.ndarray, set_id: str, file_structure: Structure
     ) -> RawData:
-        raw = super().load_data(ids, set_id, file_structure)
+        raw = self.dataset.load_data(ids, set_id, file_structure)
         return raw
 
     def make_pca_ddf(self, pca_array: np.ndarray) -> dd.DataFrame:
