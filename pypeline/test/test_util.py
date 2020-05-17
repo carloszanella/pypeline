@@ -1,4 +1,4 @@
-from trends_ni.util import get_train_ids, make_submission
+from pypeline.util import get_train_ids, make_submission
 
 
 def test_get_train_ids():

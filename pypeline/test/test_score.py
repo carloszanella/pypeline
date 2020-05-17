@@ -1,4 +1,4 @@
-from trends_ni.evaluation.score import Score
+from pypeline.evaluation.score import Score
 import numpy as np
 
 

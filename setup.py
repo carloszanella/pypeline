@@ -1,5 +1,5 @@
 # coding=utf-8
-import versioneer
+# import versioneer
 from setuptools import setup, find_packages
 
 packages = find_packages()
@@ -11,10 +11,10 @@ with open("requirements.txt") as fp:
 #     test_dependencies = fp.readlines()
 
 setup(
-    name='trends-neuroimaging',
-    description='Machine Learning Pipeline to Assess Brain Features',
-    author='Data Revenue GmbH',
-    author_email='markus@datarevenue.com',
+    name='pypeline',
+    description='Machine Learning Pipeline',
+    author='czanella',
+    author_email='carlos@datarevenue.com',
     install_requires=dependencies,
     packages=packages,
     zip_safe=False,

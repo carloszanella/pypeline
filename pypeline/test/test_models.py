@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from sklearn.linear_model import LinearRegression
 
-from trends_ni.training.models import BenchmarkModel, SKLearnWrapper as SKW, MultiModelWrapper, ModelEnsembler
+from pypeline.training.models import BenchmarkModel, SKLearnWrapper as SKW, MultiModelWrapper, ModelEnsembler
 
 
 def test_benchmark_model_fit(tiny_files_structure):

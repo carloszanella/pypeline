@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import List
 from sklearn.decomposition import PCA
 
-from trends_ni.entities import SubjectFMRI, RawData
-from trends_ni.structure import structure, Structure
+from pypeline.entities import SubjectFMRI, RawData
+from pypeline.structure import structure, Structure
 
 import dask.dataframe as dd
 import numpy as np

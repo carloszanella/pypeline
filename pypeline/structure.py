@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-ROOT = Path("/Users/carloszanella/dev/study/kaggle/trends/trends_ni/")
+ROOT = Path("/Users/carloszanella/dev/study/kaggle/pypeline/pypeline/")
 
 
 @dataclass

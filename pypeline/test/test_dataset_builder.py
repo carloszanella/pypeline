@@ -5,8 +5,8 @@ import pytest
 
 import pandas as pd
 
-from trends_ni.processing.dataset_builder import DatasetBuilder
-from trends_ni.processing.datasets import Dataset
+from pypeline.processing.dataset_builder import DatasetBuilder
+from pypeline.processing.datasets import Dataset
 
 
 @pytest.fixture()

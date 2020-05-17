@@ -2,13 +2,13 @@ from logging import getLogger, DEBUG
 from pathlib import Path
 from typing import Tuple
 
-from trends_ni.entities import RawData
+from pypeline.entities import RawData
 import pandas as pd
 import numpy as np
 import dask.dataframe as dd
 
-from trends_ni.processing.datasets import Dataset
-from trends_ni.structure import Structure, structure
+from pypeline.processing.datasets import Dataset
+from pypeline.structure import Structure, structure
 
 log = getLogger(__name__)
 log.setLevel(DEBUG)

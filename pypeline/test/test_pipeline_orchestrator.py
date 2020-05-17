@@ -5,12 +5,12 @@ from unittest.mock import Mock
 import numpy as np
 import pandas as pd
 
-from trends_ni.entities import TrainingResults
-from trends_ni.processing.dataset_builder import DatasetBuilder
-from trends_ni.processing.datasets import BenchmarkDataset
-from trends_ni.pipeline.pipeline_runner import PipelineRunner, MultipleModelRunner
-from trends_ni.training.model_trainer import ModelTrainer
-from trends_ni.training.models import BenchmarkModel
+from pypeline.entities import TrainingResults
+from pypeline.processing.dataset_builder import DatasetBuilder
+from pypeline.processing.datasets import BenchmarkDataset
+from pypeline.pipeline.pipeline_runner import PipelineRunner, MultipleModelRunner
+from pypeline.training.model_trainer import ModelTrainer
+from pypeline.training.models import BenchmarkModel
 
 
 def test_pipeline_runner_run_calls(tiny_files_structure, sample_ids):

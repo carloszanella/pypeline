@@ -3,7 +3,7 @@ from typing import List
 import pandas as pd
 import numpy as np
 
-from trends_ni.structure import structure
+from pypeline.structure import structure
 
 
 def get_train_ids() -> np.ndarray:

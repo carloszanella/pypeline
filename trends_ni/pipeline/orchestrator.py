@@ -1,1 +1,0 @@
-from trends_ni.pipeline.pipeline_runner import PipelineRunner

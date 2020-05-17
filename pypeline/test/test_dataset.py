@@ -1,14 +1,14 @@
 from pathlib import Path
 from unittest.mock import Mock
 
-from trends_ni.processing.datasets import (
+from pypeline.processing.datasets import (
     FMRIDataset,
     SimpleCorrelationsDataset,
     BenchmarkDataset,
     Dataset,
     SimpleLoadingDataset, PCAWrapper,
 )
-from trends_ni.structure import structure
+from pypeline.structure import structure
 
 
 def test_dataset_abc_class():

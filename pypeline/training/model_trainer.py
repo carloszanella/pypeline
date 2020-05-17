@@ -2,9 +2,9 @@ from logging import getLogger, DEBUG
 
 import numpy as np
 
-from trends_ni.entities import TrainingResults
-from trends_ni.evaluation.score import Score
-from trends_ni.training.models import Model
+from pypeline.entities import TrainingResults
+from pypeline.evaluation.score import Score
+from pypeline.training.models import Model
 
 log = getLogger(__name__)
 log.setLevel(DEBUG)

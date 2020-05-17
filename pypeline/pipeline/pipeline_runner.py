@@ -6,14 +6,14 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 
-from trends_ni.evaluation.score import Score
-from trends_ni.processing.data_splitter import TrainValSplitter, DataSplitter
-from trends_ni.processing.dataset_builder import DatasetBuilder
-from trends_ni.entities import TrainingResults
-from trends_ni.processing.datasets import Dataset
-from trends_ni.structure import structure, Structure
-from trends_ni.training.model_trainer import ModelTrainer
-from trends_ni.training.models import Model
+from pypeline.evaluation.score import Score
+from pypeline.processing.data_splitter import TrainValSplitter, DataSplitter
+from pypeline.processing.dataset_builder import DatasetBuilder
+from pypeline.entities import TrainingResults
+from pypeline.processing.datasets import Dataset
+from pypeline.structure import structure, Structure
+from pypeline.training.model_trainer import ModelTrainer
+from pypeline.training.models import Model
 
 log = getLogger(__name__)
 log.setLevel(DEBUG)

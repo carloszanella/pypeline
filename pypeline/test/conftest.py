@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from pathlib import Path
 import numpy as np
 
-from trends_ni.entities import RawData
+from pypeline.entities import RawData
 import pytest
 
 
-ASSETS_DIR = Path("/Users/carloszanella/dev/study/kaggle/trends/trends_ni/test/assets")
+ASSETS_DIR = Path("/Users/carloszanella/dev/study/kaggle/pypeline/pypeline/test/assets")
 
 
 @pytest.fixture()

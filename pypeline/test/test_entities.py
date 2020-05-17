@@ -1,7 +1,7 @@
-from trends_ni.entities import SubjectFMRI, RawData, TrainingResults
+from pypeline.entities import SubjectFMRI, RawData, TrainingResults
 import pytest
 
-from trends_ni.structure import structure
+from pypeline.structure import structure
 
 
 @pytest.fixture()

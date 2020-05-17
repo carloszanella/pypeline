@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from trends_ni.training.model_trainer import ModelTrainer
-from trends_ni.training.models import BenchmarkModel
+from pypeline.training.model_trainer import ModelTrainer
+from pypeline.training.models import BenchmarkModel
 
 
 def test_model_trainer(tiny_files_structure):

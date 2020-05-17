@@ -9,8 +9,8 @@ import dask.array as da
 import pandas as pd
 import numpy as np
 
-from trends_ni.structure import structure
-from trends_ni.training.models import Model
+from pypeline.structure import structure
+from pypeline.training.models import Model
 
 log = getLogger(__name__)
 log.setLevel(DEBUG)
