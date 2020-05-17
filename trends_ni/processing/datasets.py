@@ -10,6 +10,7 @@ from trends_ni.structure import structure, Structure
 import dask.dataframe as dd
 import numpy as np
 import dask.array as da
+import pandas as pd
 
 FMRI_DS_VERSION = "fmri_ds_0.1"
 SIMPLE_CORR_VERSION = "s_corr_ds_0.1"
@@ -42,7 +43,9 @@ class BenchmarkDataset(Dataset):
 
     def build_dataset(self, raw: RawData, out_path: Path) -> dd.DataFrame:
         size = raw.y.shape[0]
-        return dd.from_array(np.array([np.nan] * size).reshape(-1, 1))
+        df = pd.DataFrame(np.array([np.nan] * size).reshape(-1, 1), index=raw.ids)
+        ddf = dd.from_pandas(df, 1)
+        return ddf
 
     def load_data(
         self, ids: np.ndarray, set_id: str, file_structure: Structure
@@ -137,7 +140,7 @@ class PCAWrapper(Dataset):
         else:
             pca_array = self.pca.transform(full_ds)
 
-        pca_ddf = self.make_pca_ddf(pca_array)
+        pca_ddf = self.make_pca_ddf(pca_array, raw)
 
         return pca_ddf
 
@@ -147,7 +150,7 @@ class PCAWrapper(Dataset):
         raw = self.dataset.load_data(ids, set_id, file_structure)
         return raw
 
-    def make_pca_ddf(self, pca_array: np.ndarray) -> dd.DataFrame:
+    def make_pca_ddf(self, pca_array: np.ndarray, raw: RawData) -> dd.DataFrame:
         columns = [f"pca-{i}" for i in range(self.n_features)]
-        pca_ddf = dd.from_array(pca_array, columns=columns)
-        return pca_ddf
+        pca_df = pd.DataFrame(pca_array, columns=columns, index=raw.ids)
+        return dd.from_pandas(pca_df, 1)

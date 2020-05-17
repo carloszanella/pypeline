@@ -36,9 +36,9 @@ class DatasetBuilder:
         else:
             df = dataset.build_dataset(raw, dataset_path).compute()
 
-        return df, y
+        ix = y.notna().all(axis=1)
+        return df.loc[ix], y.loc[ix].values
 
-    def process_target(self, data: RawData) -> np.array:
+    def process_target(self, data: RawData) -> pd.DataFrame:
         y = data.y
-        y = y.fillna(0)
-        return y.values
+        return y

@@ -39,7 +39,7 @@ class RawData:
     fmri_maps: List[SubjectFMRI] = None
     loadings: dd.DataFrame = None
     icn: pd.Series = None
-    y: pd.Series = None
+    y: pd.DataFrame = None
 
     def load_data_in_memory(
         self,
